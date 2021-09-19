@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "enemy.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 529,
+				"h": 992
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "Robot_Hurricane.psd (2).png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 1237,
+						"h": 1392
+					},
+					"spriteSourceSize": {
+						"x": 355,
+						"y": 201,
+						"w": 527,
+						"h": 990
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 527,
+						"h": 990
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:7acbc8877eb83141c76b603f2acfd5f9:f548e1c00427460511fdee85b0b49464:a99356c10d69482e9bee53d25c3d05e1$"
+	}
+}

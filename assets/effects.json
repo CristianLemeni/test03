@@ -1,0 +1,146 @@
+{
+	"textures": [
+		{
+			"image": "effects.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 322,
+				"h": 254
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "Sof Projectile (3).png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 130,
+						"h": 165
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 130,
+						"h": 165
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 130,
+						"h": 165
+					}
+				},
+				{
+					"filename": "Splash (14).png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 159,
+						"h": 85
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 159,
+						"h": 85
+					},
+					"frame": {
+						"x": 1,
+						"y": 168,
+						"w": 159,
+						"h": 85
+					}
+				},
+				{
+					"filename": "Blue Swirl (1).png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 143,
+						"h": 140
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 143,
+						"h": 140
+					},
+					"frame": {
+						"x": 133,
+						"y": 1,
+						"w": 143,
+						"h": 140
+					}
+				},
+				{
+					"filename": "Projectile (13).png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 86,
+						"h": 92
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 86,
+						"h": 92
+					},
+					"frame": {
+						"x": 162,
+						"y": 143,
+						"w": 86,
+						"h": 92
+					}
+				},
+				{
+					"filename": "Fire (12).png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 33,
+						"h": 76
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 33,
+						"h": 76
+					},
+					"frame": {
+						"x": 250,
+						"y": 143,
+						"w": 33,
+						"h": 76
+					}
+				},
+				{
+					"filename": "Layer 9 (1).png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 43,
+						"h": 113
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 43,
+						"h": 113
+					},
+					"frame": {
+						"x": 278,
+						"y": 1,
+						"w": 43,
+						"h": 113
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:b848a2f776489578fd0f044ccada897b:ff47e7fc67fa28ba062b3d951c752c9c:05d3c1256da5d10ff4f36ef2966c3322$"
+	}
+}

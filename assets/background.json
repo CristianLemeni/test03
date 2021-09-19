@@ -1,0 +1,62 @@
+{
+	"textures": [
+		{
+			"image": "background.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 983,
+				"h": 315
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "Cracks.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 561,
+						"h": 313
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 561,
+						"h": 313
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 561,
+						"h": 313
+					}
+				},
+				{
+					"filename": "Defense (1).psd.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 480,
+						"h": 320
+					},
+					"spriteSourceSize": {
+						"x": 30,
+						"y": 9,
+						"w": 418,
+						"h": 279
+					},
+					"frame": {
+						"x": 564,
+						"y": 1,
+						"w": 418,
+						"h": 279
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:fedfea21c9696d30d9c3fe652961fab3:6fddf914e0dfea497aaecd12460b3724:2ba65c328dea799e4d80739630892abf$"
+	}
+}

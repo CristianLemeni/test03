@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "robot.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 267,
+				"h": 263
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "robot.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 619,
+						"h": 696
+					},
+					"spriteSourceSize": {
+						"x": 45,
+						"y": 328,
+						"w": 265,
+						"h": 261
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 265,
+						"h": 261
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:594fba995e4fb45231d345477bb87584:de8b3a130cc31adae1f86a55cfb28895:a304e87a8f03f133e4f637a0c46d3aed$"
+	}
+}

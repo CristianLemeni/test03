@@ -1,0 +1,62 @@
+{
+	"textures": [
+		{
+			"image": "player.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 182,
+				"h": 138
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "WarMachines.psd (4).png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 248,
+						"h": 311
+					},
+					"spriteSourceSize": {
+						"x": 55,
+						"y": 100,
+						"w": 138,
+						"h": 136
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 138,
+						"h": 136
+					}
+				},
+				{
+					"filename": "WarMachines.psd (1).png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 248,
+						"h": 311
+					},
+					"spriteSourceSize": {
+						"x": 104,
+						"y": 77,
+						"w": 40,
+						"h": 106
+					},
+					"frame": {
+						"x": 141,
+						"y": 1,
+						"w": 40,
+						"h": 106
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:6e2b2d718a6e9cb216d96ed5bd18e2e9:3a0cba9f5604bd7da91fce91d6f23686:86d5339b780aedd87b35e2b7c0a7e11b$"
+	}
+}
