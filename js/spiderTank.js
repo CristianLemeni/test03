@@ -433,12 +433,7 @@ const spiderTank = {
         rootObj.target.x += x
         rootObj.target.y += y
       }
-      if(rootObj.target.y < 50){
-        rootObj.physics.moveToObject(playerContainer, rootObj.target, 200);
-      }
-      else{
-        rootObj.playerContainer.list[0].body.stop()
-      }
+      rootObj.physics.moveToObject(playerContainer, rootObj.target, 200);
     }
 
     function explode(x, y, container) {
