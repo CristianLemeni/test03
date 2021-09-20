@@ -64,6 +64,9 @@ const spiderTank = {
     rootObj.horizontalVelocity = 0
     rootObj.verticalVelocity = 0
     rootObj.isDead = false
+    rootObj.lastX = 0
+    rootObj.lastY = 0
+    rootObj.speed = 200
 
     let textStyle = {
       "dropShadow": true,
@@ -175,15 +178,15 @@ const spiderTank = {
     addBackground()
     addPlayer()
     spawnTurrets([{ x: 50, y: 50 }, { x: 1850, y: 50 }, { x: 1850, y: 850 }, { x: 50, y: 850 }])
+    // rootObj.joyStick = rootObj.plugins.get('rexvirtualjoystickplugin').add(rootObj, {
+    //   x: screenCenterX,
+    //   y: rootObj.cameras.main.worldView.y + rootObj.cameras.main.height * 0.85,
+    //   radius: 50,
+    //   base: rootObj.add.circle(0, 0, 50, 0x888888),
+    //   thumb: rootObj.add.circle(0, 0, 25, 0xcccccc),
+    // }).on('update', joystickFunction, rootObj);
 
-    rootObj.joyStick = rootObj.plugins.get('rexvirtualjoystickplugin').add(rootObj, {
-      x: screenCenterX,
-      y: rootObj.cameras.main.worldView.y + rootObj.cameras.main.height * 0.85,
-      radius: 50,
-      base: rootObj.add.circle(0, 0, 50, 0x888888),
-      thumb: rootObj.add.circle(0, 0, 25, 0xcccccc),
-    }).on('update', joystickFunction, rootObj);
-
+    dynamicJoystick()
 
     for (let i = 0; i < 4; i++) {
       shootProjectile(
@@ -227,7 +230,6 @@ const spiderTank = {
         // move missile in direction facing
         const vx = Math.cos(robot.rotation) * robot.speed
         const vy = Math.sin(robot.rotation) * robot.speed
-
         try {
           robot.body.velocity.x = vx
           robot.body.velocity.y = vy
@@ -237,10 +239,10 @@ const spiderTank = {
       }
     }, 1)
 
-    spawnEnemy(getRandomInt(-100, -50), getRandomInt(0, 1500))
-    spawnEnemy(getRandomInt(0, 1800), getRandomInt(-100, -50))
-    spawnEnemy(getRandomInt(1500, 2000), getRandomInt(0, 1500))
-    spawnEnemy(getRandomInt(0, 1800), getRandomInt(1000, 1500))
+    // spawnEnemy(getRandomInt(-100, -50), getRandomInt(0, 1500))
+    // spawnEnemy(getRandomInt(0, 1800), getRandomInt(-100, -50))
+    // spawnEnemy(getRandomInt(1500, 2000), getRandomInt(0, 1500))
+    // spawnEnemy(getRandomInt(0, 1800), getRandomInt(1000, 1500))
 
     robotInt = setInterval(() => {
       spawnEnemy(getRandomInt(-100, -50), getRandomInt(0, 1500))
@@ -293,8 +295,7 @@ const spiderTank = {
       let player = rootObj.physics.add.sprite(0, 0, 'player', frames[0]);
       rootObj.playerContainer.add(player)
 
-      player.body.setSize(player.width / 3, player.height / 4, true);
-
+      player.body.setSize(Math.ceil(player.width / 3), player.height / 4, true);
       player.setInteractive({ cursor: 'pointer' });
       rootObj.input.setDraggable(player);
 
@@ -312,6 +313,7 @@ const spiderTank = {
         rotation: { value: 6.28319, duration: 1000 },
         loop: -1
       })
+
       rootObj.tweens.add({
         targets: missile,
         x: { value: destX, duration: speed },
@@ -336,7 +338,6 @@ const spiderTank = {
       robot.body.setSize(robot.width / 2, robot.height / 2, true);
       robot.frame.x = 200
       robot.frame.y = 200
-
       const tx = rootObj.playerContainer.list[0].x
       const ty = rootObj.playerContainer.list[0].y
 
@@ -368,7 +369,7 @@ const spiderTank = {
     }
 
     function endGame() {
-      if(!rootObj.isDead){
+      if (!rootObj.isDead) {
         explode(rootObj.playerContainer.list[0].x, rootObj.playerContainer.list[0].y, rootObj.playerContainer)
         rootObj.isDead = true
       }
@@ -437,13 +438,99 @@ const spiderTank = {
     }
 
     function explode(x, y, container) {
-      rootObj.explosionAudio.play();
+      // rootObj.explosionAudio.play();
       rootObj.anims.create({ key: 'explode', frames: rootObj.anims.generateFrameNames('explosion'), frameRate: 30 });
       let atlasTexture = rootObj.textures.get('explosion');
       let frames = atlasTexture.getFrameNames();
       let exp = rootObj.add.sprite(x, y, 'explosion', frames[14])
       container.add(exp)
       exp.play('explode')
+    }
+
+    function dynamicJoystick() {
+      rootObj.joystick = nipplejs.create({
+        zone: document.getElementById('gameContainer'),
+        mode: 'dynamic',
+        color: 'gray'
+      });
+
+      rootObj.joystick.on("move", (evt, data) => {
+        if (data.angle.degree) {
+          if (data.angle.degree >= 0) {
+            rootObj.lastX = rootObj.speed
+            rootObj.lastY = 0
+          }
+          if (data.angle.degree >= 25) {
+            rootObj.lastX = rootObj.speed
+            rootObj.lastY = -rootObj.speed
+          }
+          if (data.angle.degree >= 65) {
+            rootObj.lastX = 0
+            rootObj.lastY = -rootObj.speed
+          }
+          if (data.angle.degree >= 115) {
+            rootObj.lastX = -rootObj.speed
+            rootObj.lastY = -rootObj.speed
+          }
+          if (data.angle.degree >= 155) {
+            rootObj.lastX = -rootObj.speed
+            rootObj.lastY = 0
+          }
+          if (data.angle.degree >= 205) {
+            rootObj.lastX = -rootObj.speed
+            rootObj.lastY = rootObj.speed
+          }
+          if (data.angle.degree >= 215) {
+            rootObj.lastX = 0
+            rootObj.lastY = rootObj.speed
+          }
+          if (data.angle.degree >= 265) {
+            rootObj.lastX = rootObj.speed
+            rootObj.lastY = rootObj.speed
+          }
+          if (data.angle.degree >= 335) {
+            rootObj.lastX = rootObj.speed
+            rootObj.lastY = 0
+          }
+          console.log(data)
+        }
+        rootObj.playerContainer.list[0].setVelocity(rootObj.lastX, rootObj.lastY)
+      })
+
+      rootObj.joystick.on("start", () => {
+        rootObj.mouseDown = true
+      })
+
+      rootObj.joystick.on("end", () => {
+        rootObj.mouseDown = false
+        rootObj.lastX = 0
+        rootObj.lastY = 0
+        rootObj.playerContainer.list[0].body.stop()
+      })
+
+      // let moveTimeline = new TimelineMax({repeat: -1})
+
+      //   moveTimeline.add(() => {
+      //       if(rootObj.mouseDown){
+      //           move(rootObj.speed * 300 * rootObj.lastX, rootObj.speed * -300 * rootObj.lastY)
+      //       }
+      //   }, 0)
+    }
+
+    function move(x, y) {
+      let initX = this.shipContainer.x
+      let initY = this.shipContainer.y
+      initX += x
+      initY += y
+      let timeline = new TimelineLite()
+      if (0 < initX && window.innerWidth > initX) {
+        timeline.to(this.shipContainer.position, { x: initX, duration: this.speed, ease: "none" }, 0)
+      }
+      if (0 < initY && window.innerHeight > initY) {
+        timeline.to(this.shipContainer.position, { y: initY, duration: this.speed, ease: "none" }, 0)
+      }
+
+      return timeline
     }
   },
 
