@@ -492,7 +492,6 @@ const spiderTank = {
             rootObj.lastX = rootObj.speed
             rootObj.lastY = 0
           }
-          console.log(data)
         }
         rootObj.playerContainer.list[0].setVelocity(rootObj.lastX, rootObj.lastY)
       })
