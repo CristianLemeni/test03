@@ -5,9 +5,8 @@ const gameState = {
   robots: [],
   missiles: []
 }
-let robotInt
 let followInt
-let missileInt
+
 const spiderTank = {
 
   preload() {
@@ -16,10 +15,11 @@ const spiderTank = {
     this.load.atlas('effects', './assets/effects.png', './assets/effects.json');
     this.load.atlas('background', './assets/background.png', './assets/background.json');
     this.load.image('turret', './assets/turret.png');
-    this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
     this.load.audio('explosionAudio', ['./assets/explosionCrunch_000.ogg'])
+    this.load.audio('bkMusic', ['./assets/Deus Ex Tempus.ogg'])
     this.load.atlas('explosion', './assets/explosion.png', './assets/explosion.json');
-
+    this.load.atlas('menuAssets', './assets/menuAssets.png', './assets/menuAssets.json')
+    this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
   },
 
 
@@ -28,29 +28,12 @@ const spiderTank = {
     this.score = 0
     this.difficulty = 0
     this.gamePaused = false
-    this.textStyle = {
-      "dropShadow": true,
-      "dropShadowAngle": 1.1,
-      "dropShadowBlur": 5,
-      "dropShadowDistance": 3,
-      "fill": "#0c6dd4",
-      "fontFamily": "Courier New",
-      "fontSize": 55,
-      "letterSpacing": 1,
-      "lineHeight": 1,
-      "lineJoin": "round",
-      "miterLimit": 1,
-      "padding": 1,
-      "stroke": "white",
-      "strokeThickness": 8,
-      "trim": true,
-      "leading": 1
-    }
     this.robotGroup = this.add.group()
     this.emitter = new Phaser.Events.EventEmitter();
     this.target = new Phaser.Math.Vector2();
     this.playerContainer = this.add.container()
     rootObj.mainMenu = rootObj.add.container()
+    rootObj.endGameMenu = rootObj.add.container()
     this.nextX = getRandomInt(this.playerContainer.width * 2, this.cameras.main.worldView.x + this.cameras.main.width * 0.9)
     this.nextY = getRandomInt(this.playerContainer.height * 2, this.cameras.main.worldView.y + this.cameras.main.height * 0.9)
     const screenCenterX = rootObj.cameras.main.worldView.x + rootObj.cameras.main.width / 2;
@@ -58,8 +41,6 @@ const spiderTank = {
     rootObj.playerContainer.x = screenCenterX
     rootObj.playerContainer.y = screenCenterY
     rootObj.explosionAudio = this.sound.add('explosionAudio');
-    let x = 0
-    let y = 0
     gameState.robots = []
     rootObj.horizontalVelocity = 0
     rootObj.verticalVelocity = 0
@@ -67,42 +48,30 @@ const spiderTank = {
     rootObj.lastX = 0
     rootObj.lastY = 0
     rootObj.speed = 200
+    rootObj.joystickVisible = true
+    rootObj.menuOpen = false
+    rootObj.soundOn = 1
+    rootObj.timer = 0
+    rootObj.bkMusic = rootObj.sound.add('bkMusic', { volume: 0.25 });
+    rootObj.bkMusic.play({loop: true})
 
-    let textStyle = {
-      "dropShadow": true,
-      "dropShadowAngle": 1.1,
-      "dropShadowBlur": 5,
-      "dropShadowDistance": 3,
-      "fill": "#0c6dd4",
-      "fontFamily": "Courier New",
-      "fontSize": 55,
-      "letterSpacing": 1,
-      "lineHeight": 1,
-      "lineJoin": "round",
-      "miterLimit": 1,
-      "padding": 1,
-      "stroke": "white",
-      "strokeThickness": 8,
-      "trim": true,
-      "leading": 1
-    }
 
     // KEYS WSAD
     rootObj.keyW = rootObj.input.keyboard.addKey('W');
     rootObj.keyW.on('down', () => {
       rootObj.verticalVelocity--
-      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer.list[0], true)
+      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer, true)
     })
     rootObj.keyW.on('up', () => {
       if (rootObj.verticalVelocity < 0) {
         rootObj.verticalVelocity++
       }
-      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer.list[0], true)
+      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer, true)
     })
     rootObj.keyA = rootObj.input.keyboard.addKey('A');
     rootObj.keyA.on('down', () => {
       rootObj.horizontalVelocity--
-      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer.list[0], true)
+      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer, true)
     })
     rootObj.keyA.on('up', () => {
       if (rootObj.horizontalVelocity < 0) {
@@ -113,80 +82,85 @@ const spiderTank = {
     rootObj.keyS = rootObj.input.keyboard.addKey('S');
     rootObj.keyS.on('down', () => {
       rootObj.verticalVelocity++
-      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer.list[0], true)
+      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer, true)
     })
     rootObj.keyS.on('up', () => {
       if (rootObj.verticalVelocity > 0) {
         rootObj.verticalVelocity--
       }
-      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer.list[0], true)
+      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer, true)
     })
     rootObj.keyD = rootObj.input.keyboard.addKey('D');
     rootObj.keyD.on('down', () => {
       rootObj.horizontalVelocity++
-      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer.list[0], true)
+      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer, true)
     })
     rootObj.keyD.on('up', () => {
       if (rootObj.horizontalVelocity > 0) {
         rootObj.horizontalVelocity--
       }
-      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer.list[0], true)
+      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer, true)
     })
 
     //arrows
     rootObj.keyW = rootObj.input.keyboard.addKey('up');
     rootObj.keyW.on('down', () => {
       rootObj.verticalVelocity--
-      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer.list[0], true)
+      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer, true)
     })
     rootObj.keyW.on('up', () => {
       rootObj.verticalVelocity++
-      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer.list[0], true)
+      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer, true)
     })
     rootObj.keyA = rootObj.input.keyboard.addKey('left');
     rootObj.keyA.on('down', () => {
       rootObj.horizontalVelocity--
-      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer.list[0], true)
+      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer, true)
     })
     rootObj.keyA.on('up', () => {
       rootObj.horizontalVelocity++
-      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer.list[0], true)
+      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer, true)
     })
     rootObj.keyS = rootObj.input.keyboard.addKey('down');
     rootObj.keyS.on('down', () => {
       rootObj.verticalVelocity++
-      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer.list[0], true)
+      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer, true)
     })
     rootObj.keyS.on('up', () => {
       rootObj.verticalVelocity--
-      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer.list[0], true)
+      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer, true)
     })
     rootObj.keyD = rootObj.input.keyboard.addKey('right');
     rootObj.keyD.on('down', () => {
       rootObj.horizontalVelocity++
-      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer.list[0], true)
+      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer, true)
     })
     rootObj.keyD.on('up', () => {
       rootObj.horizontalVelocity--
-      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer.list[0], true)
+      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer, true)
     })
 
     this.emitter.on("ResetGame", () => {
-      endGameMenu()
+      showEndGameMenu()
     })
 
     addBackground()
     addPlayer()
-    spawnTurrets([{ x: 50, y: 50 }, { x: 1850, y: 50 }, { x: 1850, y: 850 }, { x: 50, y: 850 }])
-    // rootObj.joyStick = rootObj.plugins.get('rexvirtualjoystickplugin').add(rootObj, {
-    //   x: screenCenterX,
-    //   y: rootObj.cameras.main.worldView.y + rootObj.cameras.main.height * 0.85,
-    //   radius: 50,
-    //   base: rootObj.add.circle(0, 0, 50, 0x888888),
-    //   thumb: rootObj.add.circle(0, 0, 25, 0xcccccc),
-    // }).on('update', joystickFunction, rootObj);
+    spawnTurrets([{ x: 50, y: 50 }, { x: 1850, y: 50 }, { x: 1850, y: 1000 }, { x: 50, y: 1000 }])
+    createMenu()
+    addUI()
+
+    rootObj.joyStick = rootObj.plugins.get('rexvirtualjoystickplugin').add(rootObj, {
+      x: screenCenterX,
+      y: rootObj.cameras.main.worldView.y + rootObj.cameras.main.height * 0.85,
+      radius: 50,
+      base: rootObj.add.circle(0, 0, 50, 0x888888),
+      thumb: rootObj.add.circle(0, 0, 25, 0xcccccc),
+    }).on('update', joystickFunction, rootObj);
+    rootObj.joyStick.setVisible(false);
 
     dynamicJoystick()
+    addEndGameMenu()
 
     for (let i = 0; i < 4; i++) {
       shootProjectile(
@@ -239,19 +213,12 @@ const spiderTank = {
       }
     }, 1)
 
-    // spawnEnemy(getRandomInt(-100, -50), getRandomInt(0, 1500))
-    // spawnEnemy(getRandomInt(0, 1800), getRandomInt(-100, -50))
-    // spawnEnemy(getRandomInt(1500, 2000), getRandomInt(0, 1500))
-    // spawnEnemy(getRandomInt(0, 1800), getRandomInt(1000, 1500))
-
-    robotInt = setInterval(() => {
+    this.events.on("spawnWave", () => {
       spawnEnemy(getRandomInt(-100, -50), getRandomInt(0, 1500))
       spawnEnemy(getRandomInt(0, 1800), getRandomInt(-100, -50))
       spawnEnemy(getRandomInt(1500, 2000), getRandomInt(0, 1500))
       spawnEnemy(getRandomInt(0, 1800), getRandomInt(1000, 1500))
-    }, 10000)
 
-    missileInt = setInterval(() => {
       for (let i = 0; i < 4; i++) {
         shootProjectile(
           this.playerContainer.x + this.playerContainer.list[0].x,
@@ -260,12 +227,17 @@ const spiderTank = {
           rootObj.turrets[i].y,
           10000)
       }
-    }, 10000)
+    })
+
+    spawnEnemy(getRandomInt(-100, -50), getRandomInt(0, 1500))
+    spawnEnemy(getRandomInt(0, 1800), getRandomInt(-100, -50))
+    spawnEnemy(getRandomInt(1500, 2000), getRandomInt(0, 1500))
+    spawnEnemy(getRandomInt(0, 1800), getRandomInt(1000, 1500))
+
     this.children.bringToTop(this.playerContainer);
     this.children.bringToTop(this.robot);
     this.children.bringToTop(this.mainMenu);
-
-
+    this.children.bringToTop(this.settingsBtn)
 
     function addBackground() {
       let atlasTexture = rootObj.textures.get('background');
@@ -296,8 +268,6 @@ const spiderTank = {
       rootObj.playerContainer.add(player)
 
       player.body.setSize(Math.ceil(player.width / 3), player.height / 4, true);
-      player.setInteractive({ cursor: 'pointer' });
-      rootObj.input.setDraggable(player);
 
       rootObj.physics.add.overlap(rootObj.playerContainer.list[0], rootObj.robotGroup, endGame, null, this);
       player.body.collideWorldBounds = true;
@@ -328,6 +298,7 @@ const spiderTank = {
         evt.destroy()
       }, null, this);
       gameState.missiles.push(missile)
+      rootObj.children.bringToTop(rootObj.settingsBtn)
     }
 
     function spawnEnemy(x, y) {
@@ -372,57 +343,12 @@ const spiderTank = {
       if (!rootObj.isDead) {
         explode(rootObj.playerContainer.list[0].x, rootObj.playerContainer.list[0].y, rootObj.playerContainer)
         rootObj.isDead = true
+        rootObj.time.delayedCall(150, () => {
+          rootObj.playerContainer.visible = false
+        })
       }
-      clearInterval(robotInt)
       clearInterval(followInt)
-      clearInterval(missileInt)
-      rootObj.time.delayedCall(1000, () => {
-        rootObj.registry.destroy(); // destroy registry
-        rootObj.events.off(); // disable all active events
-        rootObj.scene.restart(); // restart current scene
-      })
-    }
-
-    function joystickFunction() {
-      rootObj.target.x = rootObj.playerContainer.list[0].x
-      rootObj.target.y = rootObj.playerContainer.list[0].y
-      let cursorKeys = rootObj.joyStick.createCursorKeys();
-      // rootObj.playerContainer
-
-      let s = ''
-      for (var name in cursorKeys) {
-        if (cursorKeys[name].isDown) {
-          s += name;
-        }
-      }
-      switch (s) {
-        case "down":
-          setPlayerVelocity(0, 1, rootObj.playerContainer.list[0])
-          break;
-        case "up":
-          setPlayerVelocity(0, -1, rootObj.playerContainer.list[0])
-          break;
-        case "left":
-          setPlayerVelocity(-1, 0, rootObj.playerContainer.list[0])
-          break;
-        case "right":
-          setPlayerVelocity(1, 0, rootObj.playerContainer.list[0])
-          break;
-        case "downright":
-          setPlayerVelocity(1, 1, rootObj.playerContainer.list[0])
-          break;
-        case "upright":
-          setPlayerVelocity(1, -1, rootObj.playerContainer.list[0])
-          break;
-        case "downleft":
-          setPlayerVelocity(-1, 1, rootObj.playerContainer.list[0])
-          break;
-        case "upleft":
-          setPlayerVelocity(-1, -1, rootObj.playerContainer.list[0])
-          break;
-        default:
-          rootObj.playerContainer.list[0].body.stop()
-      }
+      showEndGameMenu()
     }
 
     function setPlayerVelocity(x, y, playerContainer, key = false) {
@@ -434,11 +360,11 @@ const spiderTank = {
         rootObj.target.x += x
         rootObj.target.y += y
       }
-      rootObj.physics.moveToObject(playerContainer, rootObj.target, 200);
+      playerContainer.list[0].setVelocity(x * rootObj.speed, y * rootObj.speed)
     }
 
     function explode(x, y, container) {
-      // rootObj.explosionAudio.play();
+      rootObj.explosionAudio.play();
       rootObj.anims.create({ key: 'explode', frames: rootObj.anims.generateFrameNames('explosion'), frameRate: 30 });
       let atlasTexture = rootObj.textures.get('explosion');
       let frames = atlasTexture.getFrameNames();
@@ -447,93 +373,209 @@ const spiderTank = {
       exp.play('explode')
     }
 
-    function dynamicJoystick() {
-      rootObj.joystick = nipplejs.create({
-        zone: document.getElementById('gameContainer'),
-        mode: 'dynamic',
-        color: 'gray'
-      });
+    function joystickFunction() {
+      rootObj.target.x = rootObj.playerContainer.x
+      rootObj.target.y = rootObj.playerContainer.y
+      let cursorKeys = rootObj.joyStick.createCursorKeys();
 
-      rootObj.joystick.on("move", (evt, data) => {
-        if (data.angle.degree) {
-          if (data.angle.degree >= 0) {
-            rootObj.lastX = rootObj.speed
-            rootObj.lastY = 0
-          }
-          if (data.angle.degree >= 25) {
-            rootObj.lastX = rootObj.speed
-            rootObj.lastY = -rootObj.speed
-          }
-          if (data.angle.degree >= 65) {
-            rootObj.lastX = 0
-            rootObj.lastY = -rootObj.speed
-          }
-          if (data.angle.degree >= 115) {
-            rootObj.lastX = -rootObj.speed
-            rootObj.lastY = -rootObj.speed
-          }
-          if (data.angle.degree >= 155) {
-            rootObj.lastX = -rootObj.speed
-            rootObj.lastY = 0
-          }
-          if (data.angle.degree >= 205) {
-            rootObj.lastX = -rootObj.speed
-            rootObj.lastY = rootObj.speed
-          }
-          if (data.angle.degree >= 215) {
-            rootObj.lastX = 0
-            rootObj.lastY = rootObj.speed
-          }
-          if (data.angle.degree >= 265) {
-            rootObj.lastX = rootObj.speed
-            rootObj.lastY = rootObj.speed
-          }
-          if (data.angle.degree >= 335) {
-            rootObj.lastX = rootObj.speed
-            rootObj.lastY = 0
-          }
+      let s = ''
+      for (var name in cursorKeys) {
+        if (cursorKeys[name].isDown) {
+          s += name;
         }
-        rootObj.playerContainer.list[0].setVelocity(rootObj.lastX, rootObj.lastY)
-      })
-
-      rootObj.joystick.on("start", () => {
-        rootObj.mouseDown = true
-      })
-
-      rootObj.joystick.on("end", () => {
-        rootObj.mouseDown = false
-        rootObj.lastX = 0
-        rootObj.lastY = 0
-        rootObj.playerContainer.list[0].body.stop()
-      })
-
-      // let moveTimeline = new TimelineMax({repeat: -1})
-
-      //   moveTimeline.add(() => {
-      //       if(rootObj.mouseDown){
-      //           move(rootObj.speed * 300 * rootObj.lastX, rootObj.speed * -300 * rootObj.lastY)
-      //       }
-      //   }, 0)
+      }
+      switch (s) {
+        case "down":
+          setPlayerVelocity(0, 1, rootObj.playerContainer)
+          break;
+        case "up":
+          setPlayerVelocity(0, -1, rootObj.playerContainer)
+          break;
+        case "left":
+          setPlayerVelocity(-1, 0, rootObj.playerContainer)
+          break;
+        case "right":
+          setPlayerVelocity(1, 0, rootObj.playerContainer)
+          break;
+        case "downright":
+          setPlayerVelocity(1, 1, rootObj.playerContainer)
+          break;
+        case "upright":
+          setPlayerVelocity(1, -1, rootObj.playerContainer)
+          break;
+        case "downleft":
+          setPlayerVelocity(-1, 1, rootObj.playerContainer)
+          break;
+        case "upleft":
+          setPlayerVelocity(-1, -1, rootObj.playerContainer)
+          break;
+        default:
+          rootObj.playerContainer.list[0].body.stop()
+      }
     }
 
-    function move(x, y) {
-      let initX = this.shipContainer.x
-      let initY = this.shipContainer.y
-      initX += x
-      initY += y
-      let timeline = new TimelineLite()
-      if (0 < initX && window.innerWidth > initX) {
-        timeline.to(this.shipContainer.position, { x: initX, duration: this.speed, ease: "none" }, 0)
-      }
-      if (0 < initY && window.innerHeight > initY) {
-        timeline.to(this.shipContainer.position, { y: initY, duration: this.speed, ease: "none" }, 0)
-      }
+    function dynamicJoystick() {
+      rootObj.input.on('pointerdown', (pointer) => {
+        if (!rootObj.menuOpen) {
+          rootObj.joyStick.setVisible(true);
+          rootObj.joyStick.x = pointer.x
+          rootObj.joyStick.y = pointer.y
+        }
+      })
+      rootObj.input.on('pointerup', (pointer) => {
+        if (!rootObj.menuOpen) {
+          rootObj.joyStick.setVisible(false);
+        }
+      })
+    }
 
-      return timeline
+    function addUI() {
+      let atlasTexture = rootObj.textures.get('menuAssets');
+      let frames = atlasTexture.getFrameNames();
+      rootObj.settingsBtn = rootObj.physics.add.sprite(0, 0, 'menuAssets', frames[2]);
+      rootObj.settingsBtn.x = rootObj.cameras.main.worldView.width - rootObj.settingsBtn.width - 10
+      rootObj.settingsBtn.y = rootObj.settingsBtn.height + 10
+      rootObj.settingsBtn.setInteractive({ useHandCursor: true })
+      rootObj.settingsBtn.on('pointerdown', () => {
+        if (!rootObj.menuOpen) {
+          openMenu()
+          rootObj.menuOpen = true
+        }
+        else {
+          closeMenu()
+          rootObj.menuOpen = false
+        }
+      })
+    }
+
+    function createMenu() {
+      let atlasTexture = rootObj.textures.get('menuAssets');
+      let frames = atlasTexture.getFrameNames();
+      let menuWindow = rootObj.physics.add.sprite(screenCenterX, screenCenterY, 'menuAssets', frames[0]);
+      menuWindow.setScale(1.5)
+      rootObj.mainMenu.add(menuWindow)
+
+      let soundBtnAct = rootObj.physics.add.sprite(screenCenterX - 50, screenCenterY - 100, 'menuAssets', frames[1]);
+      let soundText = rootObj.add.text(screenCenterX - 100, screenCenterY - 115, 'Sound', { font: "34px" })
+      let soundSwitchOn = rootObj.physics.add.sprite(screenCenterX + 75, screenCenterY - 100, 'menuAssets', frames[3]);
+      soundSwitchOn.setInteractive({ useHandCursor: true })
+      soundSwitchOn.visible = rootObj.soundOn
+      soundSwitchOn.on('pointerdown', () => {
+        soundSwitchOff.visible = true
+        soundSwitchOn.visible = false
+        stopSound()
+      })
+      rootObj.mainMenu.add(soundBtnAct)
+      rootObj.mainMenu.add(soundText)
+      rootObj.mainMenu.add(soundSwitchOn)
+
+      let soundSwitchOff = rootObj.physics.add.sprite(screenCenterX + 75, screenCenterY - 100, 'menuAssets', frames[4]);
+      soundSwitchOff.setInteractive({ useHandCursor: true })
+      soundSwitchOff.visible = !rootObj.soundOn
+      soundSwitchOff.on('pointerdown', () => {
+        soundSwitchOn.visible = true
+        soundSwitchOff.visible = false
+        playSound()
+      })
+      rootObj.mainMenu.add(soundSwitchOff)
+
+      let scoreBtn = rootObj.physics.add.sprite(screenCenterX, screenCenterY, 'menuAssets', frames[1]);
+      let scoreText = rootObj.add.text(screenCenterX - 50, screenCenterY - 15, 'Score', { font: "34px" });
+      rootObj.score = rootObj.add.text(screenCenterX, screenCenterY + 25, '0', { font: "40px" });
+      rootObj.score.x -= rootObj.score.width / 2
+      rootObj.mainMenu.add(scoreBtn)
+      rootObj.mainMenu.add(scoreText)
+      rootObj.mainMenu.add(rootObj.score)
+
+      rootObj.mainMenu.visible = false
+    }
+
+    function closeMenu() {
+      resumeGame()
+      rootObj.mainMenu.visible = false
+    }
+
+    function openMenu() {
+      pauseGame()
+      rootObj.children.bringToTop(rootObj.mainMenu)
+      rootObj.mainMenu.visible = true
+    }
+
+    function stopSound() {
+      rootObj.soundOn = 0
+      rootObj.explosionAudio.setMute(true)
+      rootObj.bkMusic.setMute(true)
+    }
+
+    function playSound() {
+      rootObj.soundOn = 1
+      rootObj.explosionAudio.setMute(false)
+      rootObj.bkMusic.setMute(false)
+    }
+
+    function addEndGameMenu() {
+      let atlasTexture = rootObj.textures.get('menuAssets');
+      let frames = atlasTexture.getFrameNames();
+      let menuWindow = rootObj.physics.add.sprite(screenCenterX, screenCenterY, 'menuAssets', frames[0]);
+      menuWindow.setScale(1.5)
+      rootObj.endGameMenu.add(menuWindow)
+
+      let scoreBtn = rootObj.physics.add.sprite(screenCenterX, screenCenterY - 100, 'menuAssets', frames[1]);
+      let scoreText = rootObj.add.text(screenCenterX - 50, screenCenterY - 115, 'Score', { font: "34px" });
+      let score = rootObj.add.text(screenCenterX, screenCenterY - 75, 'test', { font: "40px" });
+      score.text = rootObj.score.text
+      score.x -= score.width / 2
+
+      rootObj.endGameMenu.add(scoreBtn)
+      rootObj.endGameMenu.add(scoreText)
+      rootObj.endGameMenu.add(score)
+
+      let restartBtn = rootObj.physics.add.sprite(screenCenterX, screenCenterY + 150, 'menuAssets', frames[5]);
+      restartBtn.setInteractive({ useHandCursor: true })
+      restartBtn.on('pointerdown', () => {
+        resetGame()
+      })
+      rootObj.endGameMenu.add(restartBtn)
+
+      rootObj.endGameMenu.visible = false
+    }
+
+    function showEndGameMenu() {
+      rootObj.children.bringToTop(rootObj.endGameMenu)
+      rootObj.endGameMenu.visible = true
+      rootObj.settingsBtn.visible = false
+      rootObj.physics.world.isPaused = true;
+      rootObj.tweens.killAll();
+    }
+
+    function pauseGame() {
+      rootObj.gamePaused = true
+      rootObj.physics.world.isPaused = true;
+      rootObj.tweens.pauseAll();
+    }
+
+    function resumeGame() {
+      rootObj.gamePaused = false
+      rootObj.physics.world.isPaused = false;
+      rootObj.tweens.resumeAll();
+    }
+
+    function resetGame() {
+      rootObj.registry.destroy(); // destroy registry
+      rootObj.events.off(); // disable all active events
+      rootObj.scene.restart(); // restart current scene
+      rootObj.sound.removeAll();
     }
   },
 
   update() {
+    if (this.timer >= 1000) {
+      this.events.emit("spawnWave")
+      this.timer = 0
+    }
+    else if (!this.gamePaused) {
+      this.timer++
+    }
     if (this.playerContainer) {
       const target = { x: this.playerContainer.x + this.playerContainer.list[0].x, y: this.playerContainer.y + this.playerContainer.list[0].y }
 
@@ -576,8 +618,6 @@ const spiderTank = {
     }
   },
 
-
-
 }
 
 function getRandomNumber(min, max) {
@@ -610,4 +650,3 @@ const gameConf = {
 
 
 let game = new Phaser.Game(gameConf);
-
