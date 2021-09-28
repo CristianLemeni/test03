@@ -1,5 +1,5 @@
-const width = 1920
-const height = 1080
+const width = window.innerWidth
+const height = window.innerHeight
 
 const gameState = {
   robots: [],
@@ -16,8 +16,9 @@ const spiderTank = {
     this.load.atlas('background', './assets/background.png', './assets/background.json');
     this.load.image('turret', './assets/turret.png');
     this.load.audio('explosionAudio', ['./assets/explosionCrunch_000.ogg'])
-    this.load.audio('bkMusic', ['./assets/Deus Ex Tempus.ogg'])
+    this.load.audio('bkMusic', ['./assets/bkMusic.ogg'])
     this.load.atlas('explosion', './assets/explosion.png', './assets/explosion.json');
+    this.load.atlas('smoke', './assets/smoke.png', './assets/smoke.json');
     this.load.atlas('menuAssets', './assets/menuAssets.png', './assets/menuAssets.json')
     this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
   },
@@ -34,8 +35,6 @@ const spiderTank = {
     this.playerContainer = this.add.container()
     rootObj.mainMenu = rootObj.add.container()
     rootObj.endGameMenu = rootObj.add.container()
-    this.nextX = getRandomInt(this.playerContainer.width * 2, this.cameras.main.worldView.x + this.cameras.main.width * 0.9)
-    this.nextY = getRandomInt(this.playerContainer.height * 2, this.cameras.main.worldView.y + this.cameras.main.height * 0.9)
     const screenCenterX = rootObj.cameras.main.worldView.x + rootObj.cameras.main.width / 2;
     const screenCenterY = rootObj.cameras.main.worldView.y + rootObj.cameras.main.height / 2;
     rootObj.playerContainer.x = screenCenterX
@@ -53,7 +52,9 @@ const spiderTank = {
     rootObj.soundOn = 1
     rootObj.timer = 0
     rootObj.bkMusic = rootObj.sound.add('bkMusic', { volume: 0.25 });
-    rootObj.bkMusic.play({loop: true})
+    // rootObj.bkMusic.play({loop: true})
+    rootObj.aGrid = new AlignGrid({ scene: rootObj, rows: 7, cols: 13 })
+    rootObj.gameOver = false
 
 
     // KEYS WSAD
@@ -146,9 +147,12 @@ const spiderTank = {
 
     addBackground()
     addPlayer()
-    spawnTurrets([{ x: 50, y: 50 }, { x: 1850, y: 50 }, { x: 1850, y: 1000 }, { x: 50, y: 1000 }])
+    spawnTurrets([0, 12, 78, 90])
     createMenu()
     addUI()
+    addScoreCounter()
+    rootObj.aGrid.showNumbers()
+
 
     rootObj.joyStick = rootObj.plugins.get('rexvirtualjoystickplugin').add(rootObj, {
       x: screenCenterX,
@@ -164,8 +168,8 @@ const spiderTank = {
 
     for (let i = 0; i < 4; i++) {
       shootProjectile(
-        this.playerContainer.x + this.playerContainer.list[0].x,
-        this.playerContainer.y + this.playerContainer.list[0].y,
+        rootObj.playerContainer.x + rootObj.playerContainer.list[0].x,
+        rootObj.playerContainer.y + rootObj.playerContainer.list[0].y,
         rootObj.turrets[i].x,
         rootObj.turrets[i].y,
         10000)
@@ -213,26 +217,26 @@ const spiderTank = {
       }
     }, 1)
 
-    this.events.on("spawnWave", () => {
-      spawnEnemy(getRandomInt(-100, -50), getRandomInt(0, 1500))
-      spawnEnemy(getRandomInt(0, 1800), getRandomInt(-100, -50))
-      spawnEnemy(getRandomInt(1500, 2000), getRandomInt(0, 1500))
-      spawnEnemy(getRandomInt(0, 1800), getRandomInt(1000, 1500))
+    rootObj.events.on("spawnWave", () => {
+      spawnEnemy(6)
+      spawnEnemy(39)
+      spawnEnemy(51)
+      spawnEnemy(84)
 
       for (let i = 0; i < 4; i++) {
         shootProjectile(
-          this.playerContainer.x + this.playerContainer.list[0].x,
-          this.playerContainer.y + this.playerContainer.list[0].y,
+          rootObj.playerContainer.x + rootObj.playerContainer.list[0].x,
+          rootObj.playerContainer.y + rootObj.playerContainer.list[0].y,
           rootObj.turrets[i].x,
           rootObj.turrets[i].y,
           10000)
       }
     })
 
-    spawnEnemy(getRandomInt(-100, -50), getRandomInt(0, 1500))
-    spawnEnemy(getRandomInt(0, 1800), getRandomInt(-100, -50))
-    spawnEnemy(getRandomInt(1500, 2000), getRandomInt(0, 1500))
-    spawnEnemy(getRandomInt(0, 1800), getRandomInt(1000, 1500))
+    spawnEnemy(6)
+    spawnEnemy(39)
+    spawnEnemy(51)
+    spawnEnemy(84)
 
     this.children.bringToTop(this.playerContainer);
     this.children.bringToTop(this.robot);
@@ -258,15 +262,15 @@ const spiderTank = {
         y = 0
         x += ground.width - ground.width / 7
       }
-
     }
 
     function addPlayer() {
       let atlasTexture = rootObj.textures.get('player');
       let frames = atlasTexture.getFrameNames();
       let player = rootObj.physics.add.sprite(0, 0, 'player', frames[0]);
+      player.frame.y -= 10
       rootObj.playerContainer.add(player)
-
+      Align.scaleToGameW(player, 0.2)
       player.body.setSize(Math.ceil(player.width / 3), player.height / 4, true);
 
       rootObj.physics.add.overlap(rootObj.playerContainer.list[0], rootObj.robotGroup, endGame, null, this);
@@ -277,6 +281,7 @@ const spiderTank = {
       let atlasTexture = rootObj.textures.get('effects');
       let frames = atlasTexture.getFrameNames();
       let missile = rootObj.physics.add.sprite(startX, startY, 'effects', frames[2])
+      Align.scaleToGameW(missile, 0.075)
       missile.body.setSize(missile.width / 2, missile.height / 2, true);
       rootObj.tweens.add({
         targets: missile,
@@ -301,14 +306,16 @@ const spiderTank = {
       rootObj.children.bringToTop(rootObj.settingsBtn)
     }
 
-    function spawnEnemy(x, y) {
+    function spawnEnemy(pos) {
       let atlasTexture = rootObj.textures.get('enemy');
       let frames = atlasTexture.getFrameNames();
-      let robot = rootObj.physics.add.sprite(x, y, 'enemy', frames[0])
-      robot.setScale(0.25)
-      robot.body.setSize(robot.width / 2, robot.height / 2, true);
+      let robot = rootObj.physics.add.sprite(0, 0, 'enemy', frames[0])
+      rootObj.aGrid.placeAtIndex(pos, robot)
+      Align.scaleToGameW(robot, 0.15)
+      robot.body.setSize(robot.width / 3, robot.height / 3, true);
       robot.frame.x = 200
       robot.frame.y = 200
+      smoke(robot.x, robot.y)
       const tx = rootObj.playerContainer.list[0].x
       const ty = rootObj.playerContainer.list[0].y
 
@@ -322,20 +329,24 @@ const spiderTank = {
 
     function spawnTurrets(turretPos) {
       rootObj.turrets = []
-      let turret1 = rootObj.physics.add.sprite(turretPos[0].x, turretPos[0].y, 'turret')
-      turret1.setScale(0.25)
+      let turret1 = rootObj.physics.add.sprite(0, 0, 'turret')
+      rootObj.aGrid.placeAtIndex(turretPos[0], turret1)
+      Align.scaleToGameW(turret1, 0.075)
       rootObj.turrets.push(turret1)
 
-      let turret2 = rootObj.physics.add.sprite(turretPos[1].x, turretPos[1].y, 'turret')
-      turret2.setScale(0.25)
+      let turret2 = rootObj.physics.add.sprite(0, 0, 'turret')
+      rootObj.aGrid.placeAtIndex(turretPos[1], turret2)
+      Align.scaleToGameW(turret2, 0.075)
       rootObj.turrets.push(turret2)
 
-      let turret3 = rootObj.physics.add.sprite(turretPos[2].x, turretPos[2].y, 'turret')
-      turret3.setScale(0.25)
+      let turret3 = rootObj.physics.add.sprite(0, 0, 'turret')
+      rootObj.aGrid.placeAtIndex(turretPos[2], turret3)
+      Align.scaleToGameW(turret3, 0.075)
       rootObj.turrets.push(turret3)
 
-      let turret4 = rootObj.physics.add.sprite(turretPos[3].x, turretPos[3].y, 'turret')
-      turret4.setScale(0.25)
+      let turret4 = rootObj.physics.add.sprite(0, 0, 'turret')
+      rootObj.aGrid.placeAtIndex(turretPos[3], turret4)
+      Align.scaleToGameW(turret4, 0.075)
       rootObj.turrets.push(turret4)
     }
 
@@ -343,11 +354,12 @@ const spiderTank = {
       if (!rootObj.isDead) {
         explode(rootObj.playerContainer.list[0].x, rootObj.playerContainer.list[0].y, rootObj.playerContainer)
         rootObj.isDead = true
-        rootObj.time.delayedCall(150, () => {
+        rootObj.time.delayedCall(500, () => {
           rootObj.playerContainer.visible = false
         })
       }
       clearInterval(followInt)
+      rootObj.gameOver = true
       showEndGameMenu()
     }
 
@@ -368,9 +380,24 @@ const spiderTank = {
       rootObj.anims.create({ key: 'explode', frames: rootObj.anims.generateFrameNames('explosion'), frameRate: 30 });
       let atlasTexture = rootObj.textures.get('explosion');
       let frames = atlasTexture.getFrameNames();
-      let exp = rootObj.add.sprite(x, y, 'explosion', frames[14])
+      let exp = rootObj.add.sprite(x, y, 'explosion', frames[0])
       container.add(exp)
       exp.play('explode')
+    }
+
+    function smoke(x, y) {
+      rootObj.anims.create({ key: 'smoke', frames: rootObj.anims.generateFrameNames('smoke'), frameRate: 5 });
+      let atlasTexture = rootObj.textures.get('smoke');
+      let frames = atlasTexture.getFrameNames();
+      let smk = rootObj.add.sprite(0, 0, 'smoke', frames[0])
+      let container = rootObj.add.container()
+      container.add(smk)
+      container.setPosition(x, y)
+      rootObj.tweens.add({
+        targets: container,
+        alpha: { value: 0, duration: 1000 }
+      })
+      smk.play('smoke')
     }
 
     function joystickFunction() {
@@ -433,8 +460,8 @@ const spiderTank = {
       let atlasTexture = rootObj.textures.get('menuAssets');
       let frames = atlasTexture.getFrameNames();
       rootObj.settingsBtn = rootObj.physics.add.sprite(0, 0, 'menuAssets', frames[2]);
-      rootObj.settingsBtn.x = rootObj.cameras.main.worldView.width - rootObj.settingsBtn.width - 10
-      rootObj.settingsBtn.y = rootObj.settingsBtn.height + 10
+      rootObj.aGrid.placeAtIndex(11, rootObj.settingsBtn)
+      Align.scaleToGameW(rootObj.settingsBtn, 0.05)
       rootObj.settingsBtn.setInteractive({ useHandCursor: true })
       rootObj.settingsBtn.on('pointerdown', () => {
         if (!rootObj.menuOpen) {
@@ -451,13 +478,25 @@ const spiderTank = {
     function createMenu() {
       let atlasTexture = rootObj.textures.get('menuAssets');
       let frames = atlasTexture.getFrameNames();
-      let menuWindow = rootObj.physics.add.sprite(screenCenterX, screenCenterY, 'menuAssets', frames[0]);
-      menuWindow.setScale(1.5)
+      let menuWindow = rootObj.physics.add.sprite(0, 0, 'menuAssets', frames[0]);
+      rootObj.aGrid.placeAtIndex(45, menuWindow)
+      Align.scaleToGameW(menuWindow, 0.5)
+
       rootObj.mainMenu.add(menuWindow)
 
-      let soundBtnAct = rootObj.physics.add.sprite(screenCenterX - 50, screenCenterY - 100, 'menuAssets', frames[1]);
-      let soundText = rootObj.add.text(screenCenterX - 100, screenCenterY - 115, 'Sound', { font: "34px" })
-      let soundSwitchOn = rootObj.physics.add.sprite(screenCenterX + 75, screenCenterY - 100, 'menuAssets', frames[3]);
+      let soundBtnAct = rootObj.physics.add.sprite(0, 0, 'menuAssets', frames[1]);
+      rootObj.aGrid.placeAtIndex(31, soundBtnAct)
+      Align.scaleToGameW(soundBtnAct, 0.2)
+
+      let soundText = rootObj.add.text(0, 0, 'Sound', { font: "34px" })
+      rootObj.aGrid.placeAtIndex(31, soundText)
+      Align.scaleToGameW(soundText, 0.175)
+      soundText.setOrigin(0.5)
+
+      let soundSwitchOn = rootObj.physics.add.sprite(0, 0, 'menuAssets', frames[3]);
+      rootObj.aGrid.placeAtIndex(33, soundSwitchOn)
+      Align.scaleToGameW(soundSwitchOn, 0.075)
+
       soundSwitchOn.setInteractive({ useHandCursor: true })
       soundSwitchOn.visible = rootObj.soundOn
       soundSwitchOn.on('pointerdown', () => {
@@ -465,11 +504,15 @@ const spiderTank = {
         soundSwitchOn.visible = false
         stopSound()
       })
+
       rootObj.mainMenu.add(soundBtnAct)
       rootObj.mainMenu.add(soundText)
       rootObj.mainMenu.add(soundSwitchOn)
 
-      let soundSwitchOff = rootObj.physics.add.sprite(screenCenterX + 75, screenCenterY - 100, 'menuAssets', frames[4]);
+      let soundSwitchOff = rootObj.physics.add.sprite(0, 0, 'menuAssets', frames[4]);
+      rootObj.aGrid.placeAtIndex(33, soundSwitchOff)
+      Align.scaleToGameW(soundSwitchOff, 0.075)
+
       soundSwitchOff.setInteractive({ useHandCursor: true })
       soundSwitchOff.visible = !rootObj.soundOn
       soundSwitchOff.on('pointerdown', () => {
@@ -479,10 +522,21 @@ const spiderTank = {
       })
       rootObj.mainMenu.add(soundSwitchOff)
 
-      let scoreBtn = rootObj.physics.add.sprite(screenCenterX, screenCenterY, 'menuAssets', frames[1]);
-      let scoreText = rootObj.add.text(screenCenterX - 50, screenCenterY - 15, 'Score', { font: "34px" });
-      rootObj.score = rootObj.add.text(screenCenterX, screenCenterY + 25, '0', { font: "40px" });
-      rootObj.score.x -= rootObj.score.width / 2
+      let scoreBtn = rootObj.physics.add.sprite(0, 0, 'menuAssets', frames[1]);
+      rootObj.aGrid.placeAtIndex(45, scoreBtn)
+      Align.scaleToGameW(scoreBtn, 0.2)
+
+      let scoreText = rootObj.add.text(0, 0, 'Score', { font: "34px" });
+      rootObj.aGrid.placeAtIndex(45, scoreText)
+      Align.scaleToGameW(scoreText, 0.175)
+      scoreText.setOrigin(0.5)
+
+      rootObj.score = rootObj.add.text(0, 0, '0', { font: "40px" });
+      rootObj.score.setOrigin(0.5)
+      rootObj.aGrid.placeAtIndex(58, rootObj.score)
+      Align.scaleToGameW(rootObj.score, 0.035 * rootObj.score.text.length)
+
+
       rootObj.mainMenu.add(scoreBtn)
       rootObj.mainMenu.add(scoreText)
       rootObj.mainMenu.add(rootObj.score)
@@ -516,21 +570,34 @@ const spiderTank = {
     function addEndGameMenu() {
       let atlasTexture = rootObj.textures.get('menuAssets');
       let frames = atlasTexture.getFrameNames();
-      let menuWindow = rootObj.physics.add.sprite(screenCenterX, screenCenterY, 'menuAssets', frames[0]);
-      menuWindow.setScale(1.5)
+      let menuWindow = rootObj.physics.add.sprite(0, 0, 'menuAssets', frames[0]);
+      rootObj.aGrid.placeAtIndex(45, menuWindow)
+      Align.scaleToGameW(menuWindow, 0.5)
       rootObj.endGameMenu.add(menuWindow)
 
-      let scoreBtn = rootObj.physics.add.sprite(screenCenterX, screenCenterY - 100, 'menuAssets', frames[1]);
-      let scoreText = rootObj.add.text(screenCenterX - 50, screenCenterY - 115, 'Score', { font: "34px" });
-      let score = rootObj.add.text(screenCenterX, screenCenterY - 75, 'test', { font: "40px" });
+      let scoreBtn = rootObj.physics.add.sprite(0, 0, 'menuAssets', frames[1]);
+      rootObj.aGrid.placeAtIndex(45, scoreBtn)
+      Align.scaleToGameW(scoreBtn, 0.2)
+
+      let scoreText = rootObj.add.text(0, 0, 'Score', { font: "34px" });
+      scoreText.setOrigin(0.5)
+      rootObj.aGrid.placeAtIndex(45, scoreText)
+      Align.scaleToGameW(scoreText, 0.175)
+      Align.center(scoreText)
+
+      let score = rootObj.add.text(0, 0, 'test', { font: "40px" });
       score.text = rootObj.score.text
-      score.x -= score.width / 2
+      score.setOrigin(0.5)
+      rootObj.aGrid.placeAtIndex(58, score)
+      Align.scaleToGameW(score, 0.035 * score.text.length)
 
       rootObj.endGameMenu.add(scoreBtn)
       rootObj.endGameMenu.add(scoreText)
       rootObj.endGameMenu.add(score)
 
-      let restartBtn = rootObj.physics.add.sprite(screenCenterX, screenCenterY + 150, 'menuAssets', frames[5]);
+      let restartBtn = rootObj.physics.add.sprite(0, 0, 'menuAssets', frames[5]);
+      rootObj.aGrid.placeAtIndex(71, restartBtn)
+      Align.scaleToGameW(restartBtn, 0.075)
       restartBtn.setInteractive({ useHandCursor: true })
       restartBtn.on('pointerdown', () => {
         resetGame()
@@ -566,12 +633,34 @@ const spiderTank = {
       rootObj.scene.restart(); // restart current scene
       rootObj.sound.removeAll();
     }
+
+    function addScoreCounter() {
+      rootObj.scoreCounter = rootObj.add.text(0, 0, '0', {
+        dropShadowAngle: 1.1,
+        dropShadowBlur: 5,
+        dropShadowDistance: 3,
+        fill: "white",
+        fontFamily: "Helvetica",
+        fontSize: 75,
+        letterSpacing: 1,
+        lineHeight: 1,
+        lineJoin: "round",
+        miterLimit: 1,
+        padding: 1,
+        strokeThickness: 1,
+        leading: 1
+      })
+      rootObj.scoreCounter.setOrigin(0.5)
+      rootObj.aGrid.placeAtIndex(1, rootObj.scoreCounter)
+      Align.scaleToGameW(rootObj.scoreCounter, 0.025)
+    }
   },
 
   update() {
     if (this.timer >= 1000) {
       this.events.emit("spawnWave")
       this.timer = 0
+      console.log("TEST")
     }
     else if (!this.gamePaused) {
       this.timer++
@@ -643,7 +732,8 @@ const gameConf = {
   },
   scene: spiderTank,
   scale: {
-    mode: Phaser.Scale.FIT
+    mode: Phaser.Scale.STRETCH,
+    autoCenter: Phaser.Scale.CENTER_BOTH
   }
 };
 
