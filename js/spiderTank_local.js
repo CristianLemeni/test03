@@ -15,9 +15,9 @@ const spiderTank = {
     this.load.atlas('effects', './assets/effects.png', './assets/effects.json');
     this.load.atlas('background', './assets/background.png', './assets/background.json');
     this.load.image('turret', './assets/turret.png');
+    this.load.image('fullscreenBtn', './assets/Button08.png')
     this.load.audio('explosionAudio', ['./assets/explosionCrunch_000.ogg'])
     this.load.audio('bkMusic', ['./assets/bkMusic.ogg'])
-    this.load.atlas('explosion', './assets/explosion.png', './assets/explosion.json');
     this.load.atlas('smoke', './assets/smoke.png', './assets/smoke.json');
     this.load.atlas('fire', './assets/fire.png', './assets/fire.json');
     this.load.atlas('menuAssets', './assets/menuAssets.png', './assets/menuAssets.json')
@@ -491,6 +491,27 @@ const spiderTank = {
           rootObj.menuOpen = false
         }
       })
+
+      let fullScreen = rootObj.physics.add.sprite(0, 0, 'fullscreenBtn');
+      rootObj.aGrid.placeAtIndex(9, fullScreen)
+      Align.scaleToGameW(fullScreen, 0.05)
+      fullScreen.setInteractive({ useHandCursor: true })
+      fullScreen.on('pointerdown', () => {
+        if (!rootObj.menuOpen) {
+          if (document.body.requestFullscreen) {
+            document.body.requestFullscreen();
+          } else if (document.body.webkitRequestFullscreen) { /* Safari */
+            document.body.webkitRequestFullscreen();
+          } else if (document.body.msRequestFullscreen) { /* IE11 */
+            document.body.msRequestFullscreen();
+          }
+          rootObj.menuOpen = true
+        }
+      })
+
+      fullScreen.on('pointerdown', () => {
+        rootObj.menuOpen = false
+      })
     }
 
     function createMenu() {
@@ -709,7 +730,7 @@ const gameConf = {
   },
   scene: spiderTank,
   scale: {
-    mode: Phaser.Scale.STRETCH,
+    mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
   }
 };
