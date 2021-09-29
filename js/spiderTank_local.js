@@ -1,5 +1,5 @@
-const width = 1920
-const height = 1080
+const width = window.innerWidth * window.devicePixelRatio
+const height = window.innerHeight * window.devicePixelRatio
 
 const gameState = {
   robots: [],
@@ -51,7 +51,7 @@ const spiderTank = {
     rootObj.soundOn = 1
     rootObj.timer = 0
     rootObj.bkMusic = rootObj.sound.add('bkMusic', { volume: 0.25 });
-    rootObj.bkMusic.play({loop: true})
+    // rootObj.bkMusic.play({loop: true})
     rootObj.aGrid = new AlignGrid({ scene: rootObj, rows: 7, cols: 13 })
     rootObj.gameOver = false
 
