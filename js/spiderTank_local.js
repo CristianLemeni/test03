@@ -16,7 +16,10 @@ const spiderTank = {
     this.load.atlas('background', './assets/background.png', './assets/background.json');
     this.load.image('turret', './assets/turret.png');
     this.load.image('fullscreenBtn', './assets/Button08.png')
+    this.load.image('Crate1', './assets/Crate1.png')
     this.load.audio('explosionAudio', ['./assets/explosionCrunch_000.ogg'])
+    this.load.audio('crateSound', ['./assets/crateSound.ogg'])
+    this.load.audio('mouseSound', ['./assets/mouseSound.ogg'])
     this.load.audio('bkMusic', ['./assets/bkMusic.ogg'])
     this.load.atlas('smoke', './assets/smoke.png', './assets/smoke.json');
     this.load.atlas('fire', './assets/fire.png', './assets/fire.json');
@@ -40,6 +43,8 @@ const spiderTank = {
     rootObj.playerContainer.x = screenCenterX
     rootObj.playerContainer.y = screenCenterY
     rootObj.explosionAudio = this.sound.add('explosionAudio');
+    rootObj.crateSound = this.sound.add('crateSound');
+    rootObj.mouseSound = this.sound.add('mouseSound');
     gameState.robots = []
     rootObj.horizontalVelocity = 0
     rootObj.verticalVelocity = 0
@@ -51,10 +56,15 @@ const spiderTank = {
     rootObj.soundOn = 1
     rootObj.timer = 0
     rootObj.bkMusic = rootObj.sound.add('bkMusic', { volume: 0.25 });
-    // rootObj.bkMusic.play({loop: true})
+    rootObj.bkMusic.play({loop: true})
     rootObj.aGrid = new AlignGrid({ scene: rootObj, rows: 7, cols: 13 })
     rootObj.gameOver = false
-
+    rootObj.crates = [
+      top = { exists: false, pos: 19 },
+      right = { exists: false, pos: 50 },
+      bottom = { exists: false, pos: 71 },
+      left = { exists: false, pos: 40 }
+    ]
 
     // KEYS WSAD
     rootObj.keyW = rootObj.input.keyboard.addKey('W');
@@ -164,7 +174,7 @@ const spiderTank = {
 
     dynamicJoystick()
     addEndGameMenu()
-
+    addCrates()
     for (let i = 0; i < 4; i++) {
       shootProjectile(
         screenCenterX,
@@ -218,7 +228,7 @@ const spiderTank = {
     }, 1)
 
     rootObj.events.on("spawnWave", () => {
-      rootObj.scoreCounter.text = (parseInt(rootObj.scoreCounter.text) + 1).toString()
+      rootObj.scoreCounter.text = (parseInt(rootObj.scoreCounter.text) + 1000).toString()
       if (rootObj.robotSpeed < 100) {
         rootObj.robotSpeed += 5
       }
@@ -236,6 +246,7 @@ const spiderTank = {
           10000 - rootObj.robotSpeed)
         rootObj.children.bringToTop(rootObj.turrets[i])
       }
+      addCrates()
     })
 
     spawnEnemy(6)
@@ -426,7 +437,7 @@ const spiderTank = {
       rootObj.target.y = rootObj.playerContainer.y
       let cursorKeys = rootObj.joyStick.createCursorKeys();
       let forceFactor = rootObj.joyStick.force
-      if(forceFactor > 1){
+      if (forceFactor > 1) {
         forceFactor = 1
       }
       let s = ''
@@ -488,6 +499,7 @@ const spiderTank = {
       Align.scaleToGameW(rootObj.settingsBtn, 0.05)
       rootObj.settingsBtn.setInteractive({ useHandCursor: true })
       rootObj.settingsBtn.on('pointerdown', () => {
+        rootObj.mouseSound.play()
         if (!rootObj.menuOpen) {
           openMenu()
           rootObj.menuOpen = true
@@ -503,6 +515,7 @@ const spiderTank = {
       Align.scaleToGameW(fullScreen, 0.05)
       fullScreen.setInteractive({ useHandCursor: true })
       fullScreen.on('pointerdown', () => {
+        rootObj.mouseSound.play()
         if (!rootObj.menuOpen) {
           if (document.body.requestFullscreen) {
             document.body.requestFullscreen();
@@ -510,6 +523,13 @@ const spiderTank = {
             document.body.webkitRequestFullscreen();
           } else if (document.body.msRequestFullscreen) { /* IE11 */
             document.body.msRequestFullscreen();
+          }
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) { /* Safari */
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) { /* IE11 */
+            document.msExitFullscreen();
           }
           rootObj.menuOpen = true
         }
@@ -545,6 +565,7 @@ const spiderTank = {
       soundSwitchOn.setInteractive({ useHandCursor: true })
       soundSwitchOn.visible = rootObj.soundOn
       soundSwitchOn.on('pointerdown', () => {
+        rootObj.mouseSound.play()
         soundSwitchOff.visible = true
         soundSwitchOn.visible = false
         stopSound()
@@ -561,6 +582,7 @@ const spiderTank = {
       soundSwitchOff.setInteractive({ useHandCursor: true })
       soundSwitchOff.visible = !rootObj.soundOn
       soundSwitchOff.on('pointerdown', () => {
+        rootObj.mouseSound.play()
         soundSwitchOn.visible = true
         soundSwitchOff.visible = false
         playSound()
@@ -645,6 +667,7 @@ const spiderTank = {
       Align.scaleToGameW(restartBtn, 0.075)
       restartBtn.setInteractive({ useHandCursor: true })
       restartBtn.on('pointerdown', () => {
+        rootObj.mouseSound.play()
         resetGame()
       })
       rootObj.endGameMenu.add(restartBtn)
@@ -698,6 +721,40 @@ const spiderTank = {
       rootObj.scoreCounter.setOrigin(0.5)
       rootObj.aGrid.placeAtIndex(1, rootObj.scoreCounter)
       Align.scaleToGameW(rootObj.scoreCounter, 0.025)
+    }
+
+    function createCrate(pos, scale, index) {
+      let crate = rootObj.physics.add.sprite(0, 0, 'Crate1')
+      Align.scaleToGameW(crate, scale)
+      rootObj.aGrid.placeAtIndex(pos, crate)
+
+      crate.body.setSize(crate.width, crate.height, true);
+      rootObj.tweens.add({
+        targets: crate,
+        alpha: { value: 0.85, duration: 1000, ease:"Power1" },
+        loop: -1
+      })
+      crate.index = index
+      rootObj.physics.add.overlap(rootObj.playerContainer.list[0], crate, () => {
+        removeCrate(crate)
+      }, null, this);
+    }
+
+    function removeCrate(crate){
+      rootObj.crateSound.play({volume: 0.25})
+      //increase score
+      rootObj.scoreCounter.text = (parseInt(rootObj.scoreCounter.text) + 250).toString()
+      rootObj.crates[crate.index].exists = false
+      crate.destroy()
+    }
+
+    function addCrates() {
+      for (let i = 0; i < rootObj.crates.length; i++) {
+        if (!rootObj.crates[i].exists) {
+          createCrate(rootObj.crates[i].pos, 0.05, i)
+          rootObj.crates[i].exists = true
+        }
+      }
     }
   },
 
