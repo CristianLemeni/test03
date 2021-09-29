@@ -425,7 +425,10 @@ const spiderTank = {
       rootObj.target.x = rootObj.playerContainer.x
       rootObj.target.y = rootObj.playerContainer.y
       let cursorKeys = rootObj.joyStick.createCursorKeys();
-
+      let forceFactor = rootObj.joyStick.force
+      if(forceFactor > 1){
+        forceFactor = 1
+      }
       let s = ''
       for (var name in cursorKeys) {
         if (cursorKeys[name].isDown) {
@@ -434,28 +437,28 @@ const spiderTank = {
       }
       switch (s) {
         case "down":
-          setPlayerVelocity(0, 1, rootObj.playerContainer)
+          setPlayerVelocity(0, forceFactor, rootObj.playerContainer)
           break;
         case "up":
-          setPlayerVelocity(0, -1, rootObj.playerContainer)
+          setPlayerVelocity(0, -forceFactor, rootObj.playerContainer)
           break;
         case "left":
-          setPlayerVelocity(-1, 0, rootObj.playerContainer)
+          setPlayerVelocity(-forceFactor, 0, rootObj.playerContainer)
           break;
         case "right":
-          setPlayerVelocity(1, 0, rootObj.playerContainer)
+          setPlayerVelocity(forceFactor, 0, rootObj.playerContainer)
           break;
         case "downright":
-          setPlayerVelocity(1, 1, rootObj.playerContainer)
+          setPlayerVelocity(forceFactor, forceFactor, rootObj.playerContainer)
           break;
         case "upright":
-          setPlayerVelocity(1, -1, rootObj.playerContainer)
+          setPlayerVelocity(forceFactor, -forceFactor, rootObj.playerContainer)
           break;
         case "downleft":
-          setPlayerVelocity(-1, 1, rootObj.playerContainer)
+          setPlayerVelocity(-forceFactor, forceFactor, rootObj.playerContainer)
           break;
         case "upleft":
-          setPlayerVelocity(-1, -1, rootObj.playerContainer)
+          setPlayerVelocity(-forceFactor, -forceFactor, rootObj.playerContainer)
           break;
         default:
           rootObj.playerContainer.list[0].body.stop()
@@ -733,7 +736,7 @@ const gameConf = {
   },
   scene: spiderTank,
   scale: {
-    mode: Phaser.Scale.FIT,
+    mode: Phaser.Scale.STRETCH,
     autoCenter: Phaser.Scale.CENTER_BOTH
   }
 };
