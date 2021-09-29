@@ -19,6 +19,7 @@ const spiderTank = {
     this.load.audio('bkMusic', ['./assets/bkMusic.ogg'])
     this.load.atlas('explosion', './assets/explosion.png', './assets/explosion.json');
     this.load.atlas('smoke', './assets/smoke.png', './assets/smoke.json');
+    this.load.atlas('fire', './assets/fire.png', './assets/fire.json');
     this.load.atlas('menuAssets', './assets/menuAssets.png', './assets/menuAssets.json')
     this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
   },
@@ -27,7 +28,6 @@ const spiderTank = {
   create() {
     let rootObj = this;
     this.score = 0
-    this.difficulty = 0
     this.gamePaused = false
     this.robotGroup = this.add.group()
     this.emitter = new Phaser.Events.EventEmitter();
@@ -44,9 +44,8 @@ const spiderTank = {
     rootObj.horizontalVelocity = 0
     rootObj.verticalVelocity = 0
     rootObj.isDead = false
-    rootObj.lastX = 0
-    rootObj.lastY = 0
     rootObj.speed = 200
+    rootObj.robotSpeed = 25
     rootObj.joystickVisible = true
     rootObj.menuOpen = false
     rootObj.soundOn = 1
@@ -78,7 +77,7 @@ const spiderTank = {
       if (rootObj.horizontalVelocity < 0) {
         rootObj.horizontalVelocity++
       }
-      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer.list[0], true)
+      setPlayerVelocity(rootObj.horizontalVelocity, rootObj.verticalVelocity, rootObj.playerContainer, true)
     })
     rootObj.keyS = rootObj.input.keyboard.addKey('S');
     rootObj.keyS.on('down', () => {
@@ -168,11 +167,12 @@ const spiderTank = {
 
     for (let i = 0; i < 4; i++) {
       shootProjectile(
-        rootObj.playerContainer.x + rootObj.playerContainer.list[0].x,
-        rootObj.playerContainer.y + rootObj.playerContainer.list[0].y,
+        screenCenterX,
+        screenCenterY,
         rootObj.turrets[i].x,
         rootObj.turrets[i].y,
-        10000)
+        10000 - this.robotSpeed)
+      rootObj.children.bringToTop(rootObj.turrets[i])
     }
 
     followInt = setInterval(() => {
@@ -218,6 +218,7 @@ const spiderTank = {
     }, 1)
 
     rootObj.events.on("spawnWave", () => {
+      rootObj.robotSpeed += 10
       spawnEnemy(6)
       spawnEnemy(39)
       spawnEnemy(51)
@@ -225,11 +226,12 @@ const spiderTank = {
 
       for (let i = 0; i < 4; i++) {
         shootProjectile(
-          rootObj.playerContainer.x + rootObj.playerContainer.list[0].x,
-          rootObj.playerContainer.y + rootObj.playerContainer.list[0].y,
+          screenCenterX,
+          screenCenterY,
           rootObj.turrets[i].x,
           rootObj.turrets[i].y,
-          10000)
+          10000 - this.robotSpeed)
+        rootObj.children.bringToTop(rootObj.turrets[i])
       }
     })
 
@@ -270,14 +272,14 @@ const spiderTank = {
       let player = rootObj.physics.add.sprite(0, 0, 'player', frames[0]);
       player.frame.y -= 10
       rootObj.playerContainer.add(player)
-      Align.scaleToGameW(player, 0.2)
+      Align.scaleToGameW(player, 0.1)
       player.body.setSize(Math.ceil(player.width / 3), player.height / 4, true);
 
       rootObj.physics.add.overlap(rootObj.playerContainer.list[0], rootObj.robotGroup, endGame, null, this);
       player.body.collideWorldBounds = true;
     }
 
-    function shootProjectile(destX, destY, startX, startY, speed) {
+    function shootProjectile(destX, destY, startX, startY, duration) {
       let atlasTexture = rootObj.textures.get('effects');
       let frames = atlasTexture.getFrameNames();
       let missile = rootObj.physics.add.sprite(startX, startY, 'effects', frames[2])
@@ -291,16 +293,16 @@ const spiderTank = {
 
       rootObj.tweens.add({
         targets: missile,
-        x: { value: destX, duration: speed },
-        y: { value: destY, duration: speed },
+        x: { value: destX, duration: duration },
+        y: { value: destY, duration: duration },
         onComplete: () => {
           missile.destroy()
         }
       })
       rootObj.physics.add.overlap(rootObj.playerContainer.list[0], missile, endGame, null, this);
       rootObj.physics.add.overlap(rootObj.robotGroup, missile, (evt) => {
-        missile.destroy()
         evt.destroy()
+        explode(evt.x, evt.y)
       }, null, this);
       gameState.missiles.push(missile)
       rootObj.children.bringToTop(rootObj.settingsBtn)
@@ -320,9 +322,8 @@ const spiderTank = {
       const ty = rootObj.playerContainer.list[0].y
 
       robot.target = new Phaser.Math.Vector2(tx, ty)
-
+      robot.speed = Math.floor(Math.pow(rootObj.robotSpeed, 1.2) + 2)
       robot.turnDegreesPerFrame = 1.25
-      robot.speed = 100
       rootObj.robotGroup.add(robot)
       gameState.robots.push(robot)
     }
@@ -330,21 +331,25 @@ const spiderTank = {
     function spawnTurrets(turretPos) {
       rootObj.turrets = []
       let turret1 = rootObj.physics.add.sprite(0, 0, 'turret')
+      turret1.setRotation(0.785398)
       rootObj.aGrid.placeAtIndex(turretPos[0], turret1)
       Align.scaleToGameW(turret1, 0.075)
       rootObj.turrets.push(turret1)
 
       let turret2 = rootObj.physics.add.sprite(0, 0, 'turret')
+      turret2.setRotation(-3.92699)
       rootObj.aGrid.placeAtIndex(turretPos[1], turret2)
       Align.scaleToGameW(turret2, 0.075)
       rootObj.turrets.push(turret2)
 
       let turret3 = rootObj.physics.add.sprite(0, 0, 'turret')
+      turret3.setRotation(-0.785398)
       rootObj.aGrid.placeAtIndex(turretPos[2], turret3)
       Align.scaleToGameW(turret3, 0.075)
       rootObj.turrets.push(turret3)
 
       let turret4 = rootObj.physics.add.sprite(0, 0, 'turret')
+      turret4.setRotation(3.92699)
       rootObj.aGrid.placeAtIndex(turretPos[3], turret4)
       Align.scaleToGameW(turret4, 0.075)
       rootObj.turrets.push(turret4)
@@ -372,17 +377,30 @@ const spiderTank = {
         rootObj.target.x += x
         rootObj.target.y += y
       }
-      playerContainer.list[0].setVelocity(x * rootObj.speed, y * rootObj.speed)
+      const vx = x * rootObj.speed
+      const vy = y * rootObj.speed
+      playerContainer.list[0].setVelocity(vx, vy)
     }
 
     function explode(x, y, container) {
       rootObj.explosionAudio.play();
-      rootObj.anims.create({ key: 'explode', frames: rootObj.anims.generateFrameNames('explosion'), frameRate: 30 });
-      let atlasTexture = rootObj.textures.get('explosion');
+      rootObj.anims.create({ key: 'fire', frames: rootObj.anims.generateFrameNames('fire'), frameRate: 5 });
+      let atlasTexture = rootObj.textures.get('fire');
       let frames = atlasTexture.getFrameNames();
-      let exp = rootObj.add.sprite(x, y, 'explosion', frames[0])
-      container.add(exp)
-      exp.play('explode')
+      let exp = rootObj.add.sprite(x, y, 'fire', frames[0])
+      if (container) {
+        container.add(exp)
+      }
+      exp.play('fire', false)
+      exp.once('animationcomplete', () => {
+        rootObj.tweens.add({
+          targets: exp,
+          alpha: { value: 0, duration: 500 },
+          onComplete: () => {
+            exp.destroy()
+          }
+        })
+      });
     }
 
     function smoke(x, y) {
@@ -629,7 +647,7 @@ const spiderTank = {
 
     function resetGame() {
       rootObj.registry.destroy(); // destroy registry
-      rootObj.events.off(); // disable all active events
+      rootObj.events.removeListener("spawnWave"); // remove all active events
       rootObj.scene.restart(); // restart current scene
       rootObj.sound.removeAll();
     }
@@ -660,50 +678,9 @@ const spiderTank = {
     if (this.timer >= 1000) {
       this.events.emit("spawnWave")
       this.timer = 0
-      console.log("TEST")
     }
     else if (!this.gamePaused) {
       this.timer++
-    }
-    if (this.playerContainer) {
-      const target = { x: this.playerContainer.x + this.playerContainer.list[0].x, y: this.playerContainer.y + this.playerContainer.list[0].y }
-
-      const tx = target.x
-      const ty = target.y
-
-      let x1 = this.turrets[0].x
-      let y1 = this.turrets[0].y
-
-      let rotation1 = Phaser.Math.Angle.Between(x1, y1, tx, ty)
-      this.turrets[0].setRotation(rotation1)
-
-      let x2 = this.turrets[1].x
-      let y2 = this.turrets[1].y
-
-      let rotation2 = Phaser.Math.Angle.Between(x2, y2, tx, ty)
-      this.turrets[1].setRotation(rotation2)
-
-      let x3 = this.turrets[2].x
-      let y3 = this.turrets[2].y
-
-      let rotation3 = Phaser.Math.Angle.Between(x3, y3, tx, ty)
-      this.turrets[2].setRotation(rotation3)
-
-      let x4 = this.turrets[3].x
-      let y4 = this.turrets[3].y
-
-      let rotation4 = Phaser.Math.Angle.Between(x4, y4, tx, ty)
-      this.turrets[3].setRotation(rotation4)
-
-      if (this.playerContainer.list[0].body) {
-        let distance = Phaser.Math.Distance.Between(this.playerContainer.list[0].x, this.playerContainer.list[0].y, this.target.x, this.target.y);
-        if (this.playerContainer.list[0].body.speed > 0) {
-          if (distance < 1) {
-            this.playerContainer.list[0].body.stop()
-          }
-        }
-      }
-
     }
   },
 
