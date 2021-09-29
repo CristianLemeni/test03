@@ -171,7 +171,7 @@ const spiderTank = {
         screenCenterY,
         rootObj.turrets[i].x,
         rootObj.turrets[i].y,
-        10000 - this.robotSpeed)
+        10000 - rootObj.robotSpeed)
       rootObj.children.bringToTop(rootObj.turrets[i])
     }
 
@@ -218,7 +218,10 @@ const spiderTank = {
     }, 1)
 
     rootObj.events.on("spawnWave", () => {
-      rootObj.robotSpeed += 10
+      rootObj.scoreCounter.text = (parseInt(rootObj.scoreCounter.text) + 1).toString()
+      if (rootObj.robotSpeed < 100) {
+        rootObj.robotSpeed += 5
+      }
       spawnEnemy(6)
       spawnEnemy(39)
       spawnEnemy(51)
@@ -230,7 +233,7 @@ const spiderTank = {
           screenCenterY,
           rootObj.turrets[i].x,
           rootObj.turrets[i].y,
-          10000 - this.robotSpeed)
+          10000 - rootObj.robotSpeed)
         rootObj.children.bringToTop(rootObj.turrets[i])
       }
     })
