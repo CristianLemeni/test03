@@ -1,5 +1,5 @@
-const width = window.innerWidth * window.devicePixelRatio
-const height = window.innerHeight * window.devicePixelRatio
+const width = 1920
+const height = 1080
 
 const gameState = {
   robots: [],
