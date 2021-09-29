@@ -1,5 +1,5 @@
-const width = window.innerWidth
-const height = window.innerHeight
+const width = window.innerWidth * window.devicePixelRatio
+const height = window.innerHeight * window.devicePixelRatio
 
 const gameState = {
   robots: [],
