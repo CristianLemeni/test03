@@ -17,7 +17,7 @@ const spiderTank = {
     this.load.image('turret', './assets/turret.png');
     this.load.image('fullscreenBtn', './assets/Button08.png')
     this.load.image('Crate1', './assets/Crate1.png')
-    this.load.audio('explosionAudio', ['./assets/explosionCrunch_000.ogg'])
+//     this.load.audio('explosionAudio', ['./assets/explosionCrunch_000.ogg'])
     this.load.audio('crateSound', ['./assets/crateSound.ogg'])
     this.load.audio('mouseSound', ['./assets/mouseSound.ogg'])
     this.load.audio('bkMusic', ['./assets/bkMusic.ogg'])
@@ -42,7 +42,7 @@ const spiderTank = {
     const screenCenterY = rootObj.cameras.main.worldView.y + rootObj.cameras.main.height / 2;
     rootObj.playerContainer.x = screenCenterX
     rootObj.playerContainer.y = screenCenterY
-    rootObj.explosionAudio = this.sound.add('explosionAudio');
+//     rootObj.explosionAudio = this.sound.add('explosionAudio');
     rootObj.crateSound = this.sound.add('crateSound');
     rootObj.mouseSound = this.sound.add('mouseSound');
     gameState.robots = []
@@ -397,7 +397,7 @@ const spiderTank = {
     }
 
     function explode(x, y, container) {
-      rootObj.explosionAudio.play();
+//       rootObj.explosionAudio.play();
       rootObj.anims.create({ key: 'fire', frames: rootObj.anims.generateFrameNames('fire'), frameRate: 5 });
       let atlasTexture = rootObj.textures.get('fire');
       let frames = atlasTexture.getFrameNames();
@@ -624,13 +624,13 @@ const spiderTank = {
 
     function stopSound() {
       rootObj.soundOn = 0
-      rootObj.explosionAudio.setMute(true)
+//       rootObj.explosionAudio.setMute(true)
       rootObj.bkMusic.setMute(true)
     }
 
     function playSound() {
       rootObj.soundOn = 1
-      rootObj.explosionAudio.setMute(false)
+//       rootObj.explosionAudio.setMute(false)
       rootObj.bkMusic.setMute(false)
     }
 
