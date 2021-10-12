@@ -18,9 +18,9 @@ const spiderTank = {
     this.load.image('fullscreenBtn', './assets/Button08.png')
     this.load.image('Crate1', './assets/Crate1.png')
 //     this.load.audio('explosionAudio', ['./assets/explosionCrunch_000.ogg'])
-    this.load.audio('crateSound', ['./assets/crateSound.ogg'])
-    this.load.audio('mouseSound', ['./assets/mouseSound.ogg'])
-    this.load.audio('bkMusic', ['./assets/bkMusic.ogg'])
+//     this.load.audio('crateSound', ['./assets/crateSound.ogg'])
+//     this.load.audio('mouseSound', ['./assets/mouseSound.ogg'])
+//     this.load.audio('bkMusic', ['./assets/bkMusic.ogg'])
     this.load.atlas('smoke', './assets/smoke.png', './assets/smoke.json');
     this.load.atlas('fire', './assets/fire.png', './assets/fire.json');
     this.load.atlas('menuAssets', './assets/menuAssets.png', './assets/menuAssets.json')
@@ -43,8 +43,8 @@ const spiderTank = {
     rootObj.playerContainer.x = screenCenterX
     rootObj.playerContainer.y = screenCenterY
 //     rootObj.explosionAudio = this.sound.add('explosionAudio');
-    rootObj.crateSound = this.sound.add('crateSound');
-    rootObj.mouseSound = this.sound.add('mouseSound');
+//     rootObj.crateSound = this.sound.add('crateSound');
+//     rootObj.mouseSound = this.sound.add('mouseSound');
     gameState.robots = []
     rootObj.horizontalVelocity = 0
     rootObj.verticalVelocity = 0
@@ -55,8 +55,8 @@ const spiderTank = {
     rootObj.menuOpen = false
     rootObj.soundOn = 1
     rootObj.timer = 0
-    rootObj.bkMusic = rootObj.sound.add('bkMusic', { volume: 0.25 });
-    rootObj.bkMusic.play({loop: true})
+//     rootObj.bkMusic = rootObj.sound.add('bkMusic', { volume: 0.25 });
+//     rootObj.bkMusic.play({loop: true})
     rootObj.aGrid = new AlignGrid({ scene: rootObj, rows: 7, cols: 13 })
     rootObj.gameOver = false
     rootObj.crates = [
@@ -499,7 +499,7 @@ const spiderTank = {
       Align.scaleToGameW(rootObj.settingsBtn, 0.05)
       rootObj.settingsBtn.setInteractive({ useHandCursor: true })
       rootObj.settingsBtn.on('pointerdown', () => {
-        rootObj.mouseSound.play()
+//         rootObj.mouseSound.play()
         if (!rootObj.menuOpen) {
           openMenu()
           rootObj.menuOpen = true
@@ -625,13 +625,13 @@ const spiderTank = {
     function stopSound() {
       rootObj.soundOn = 0
 //       rootObj.explosionAudio.setMute(true)
-      rootObj.bkMusic.setMute(true)
+//       rootObj.bkMusic.setMute(true)
     }
 
     function playSound() {
       rootObj.soundOn = 1
 //       rootObj.explosionAudio.setMute(false)
-      rootObj.bkMusic.setMute(false)
+//       rootObj.bkMusic.setMute(false)
     }
 
     function addEndGameMenu() {
@@ -667,7 +667,7 @@ const spiderTank = {
       Align.scaleToGameW(restartBtn, 0.075)
       restartBtn.setInteractive({ useHandCursor: true })
       restartBtn.on('pointerdown', () => {
-        rootObj.mouseSound.play()
+//         rootObj.mouseSound.play()
         resetGame()
       })
       rootObj.endGameMenu.add(restartBtn)
@@ -741,7 +741,7 @@ const spiderTank = {
     }
 
     function removeCrate(crate){
-      rootObj.crateSound.play({volume: 0.25})
+//       rootObj.crateSound.play({volume: 0.25})
       //increase score
       rootObj.scoreCounter.text = (parseInt(rootObj.scoreCounter.text) + 250).toString()
       rootObj.crates[crate.index].exists = false
