@@ -793,7 +793,7 @@ const gameConf = {
   },
   scene: spiderTank,
   scale: {
-    mode: Phaser.Scale.FIT,
+    mode: Phaser.Scale.HEIGHT_CONTROLS_WIDTH,
     autoCenter: Phaser.Scale.CENTER_BOTH
   }
 };
