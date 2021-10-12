@@ -515,7 +515,7 @@ const spiderTank = {
       Align.scaleToGameW(fullScreen, 0.05)
       fullScreen.setInteractive({ useHandCursor: true })
       fullScreen.on('pointerdown', () => {
-        rootObj.mouseSound.play()
+//         rootObj.mouseSound.play()
         if (!rootObj.menuOpen) {
           if (document.body.requestFullscreen) {
             document.body.requestFullscreen();
@@ -565,7 +565,7 @@ const spiderTank = {
       soundSwitchOn.setInteractive({ useHandCursor: true })
       soundSwitchOn.visible = rootObj.soundOn
       soundSwitchOn.on('pointerdown', () => {
-        rootObj.mouseSound.play()
+//         rootObj.mouseSound.play()
         soundSwitchOff.visible = true
         soundSwitchOn.visible = false
         stopSound()
@@ -582,7 +582,7 @@ const spiderTank = {
       soundSwitchOff.setInteractive({ useHandCursor: true })
       soundSwitchOff.visible = !rootObj.soundOn
       soundSwitchOff.on('pointerdown', () => {
-        rootObj.mouseSound.play()
+//         rootObj.mouseSound.play()
         soundSwitchOn.visible = true
         soundSwitchOff.visible = false
         playSound()
