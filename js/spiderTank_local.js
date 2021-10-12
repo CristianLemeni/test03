@@ -1,7 +1,3 @@
-const width = window.innerWidth * window.devicePixelRatio
-const height = window.innerHeight * window.devicePixelRatio
-
-
 const gameState = {
   robots: [],
   missiles: []
@@ -268,8 +264,8 @@ const spiderTank = {
       ground.setAlpha(0)
       let x = 0
       let y = 0
-      let groundTilesWidth = Math.ceil(width / ground.width)
-      let groundTilesHeight = Math.ceil(height / ground.height)
+      let groundTilesWidth = Math.ceil(window.innerWidth * window.devicePixelRatio / ground.width)
+      let groundTilesHeight = Math.ceil(window.innerHeight * window.devicePixelRatio / ground.height)
       for (let i = 0; i < groundTilesWidth + 1; i++) {
         for (let j = 0; j < groundTilesHeight + 1; j++) {
           let g = rootObj.physics.add.sprite(x, y, 'background', frames[1]);
