@@ -1,6 +1,3 @@
-const width = window.innerWidth * window.devicePixelRatio
-const height = window.innerHeight * window.devicePixelRatio
-
 const gameState = {
   robots: [],
   missiles: []
@@ -782,8 +779,8 @@ function getRandomInt(min, max) {
 
 const gameConf = {
   type: Phaser.AUTO,
-  width: width,
-  height: height,
+  width: window.innerWidth * window.devicePixelRatio,
+  height: window.innerHeight * window.devicePixelRatio,
   physics: {
     default: 'arcade',
     arcade: {
