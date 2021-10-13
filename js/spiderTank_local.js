@@ -62,7 +62,7 @@ const spiderTank = {
       bottom = { exists: false, pos: 71 },
       left = { exists: false, pos: 40 }
     ]
-
+    console.error(game)
     // KEYS WSAD
     rootObj.keyW = rootObj.input.keyboard.addKey('W');
     rootObj.keyW.on('down', () => {
@@ -797,4 +797,4 @@ const gameConf = {
 console.error(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio)
 
 let game = new Phaser.Game(gameConf);
-console.error(game.canvas)
+
