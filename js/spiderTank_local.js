@@ -3,7 +3,8 @@ const gameState = {
   missiles: []
 }
 let followInt
-
+let scaleRatio = window.devicePixelRatio / 3;
+let t = 0
 const spiderTank = {
 
   preload() {
@@ -62,7 +63,7 @@ const spiderTank = {
       bottom = { exists: false, pos: 71 },
       left = { exists: false, pos: 40 }
     ]
-    console.error(game)
+
     // KEYS WSAD
     rootObj.keyW = rootObj.input.keyboard.addKey('W');
     rootObj.keyW.on('down', () => {
@@ -151,7 +152,7 @@ const spiderTank = {
       showEndGameMenu()
     })
 
-//     addBackground()
+    // addBackground()
     addPlayer()
     spawnTurrets([0, 12, 78, 90])
     createMenu()
@@ -159,6 +160,14 @@ const spiderTank = {
     addScoreCounter()
     rootObj.aGrid.showNumbers()
 
+    const scale = Math.max(window.innerWidth /rootObj.cameras.main.worldView.width, window.innerHeight / rootObj.cameras.main.worldView.height);
+    const w = rootObj.cameras.main.worldView.width * scale;
+    const h = rootObj.cameras.main.worldView.height * scale;
+
+    if(t < 1){
+      document.dispatchEvent(new CustomEvent("scale", {detail: {w: w, h: h}}))
+      t++
+    }
 
     rootObj.joyStick = rootObj.plugins.get('rexvirtualjoystickplugin').add(rootObj, {
       x: screenCenterX,
@@ -776,7 +785,6 @@ function getRandomInt(min, max) {
 }
 
 
-
 const gameConf = {
   type: Phaser.AUTO,
   width: window.innerWidth * window.devicePixelRatio,
@@ -789,12 +797,25 @@ const gameConf = {
     }
   },
   scene: spiderTank,
-  scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH
-  }
 };
-console.error(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio)
 
 let game = new Phaser.Game(gameConf);
+
+
+document.addEventListener("scale", (evt) => {
+  const gameConf2 = {
+    type: Phaser.AUTO,
+    width: evt.detail.w,
+    height: evt.detail.h,
+    physics: {
+      default: 'arcade',
+      arcade: {
+        debug: false,
+        gravity: { y: 0 }
+      }
+    },
+    scene: spiderTank,
+  };
+  game = new Phaser.Game(gameConf2);
+})
 
