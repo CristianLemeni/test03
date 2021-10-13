@@ -15,10 +15,10 @@ const spiderTank = {
     this.load.image('turret', './assets/turret.png');
     this.load.image('fullscreenBtn', './assets/Button08.png')
     this.load.image('Crate1', './assets/Crate1.png')
-//     this.load.audio('explosionAudio', ['./assets/explosionCrunch_000.ogg'])
-//     this.load.audio('crateSound', ['./assets/crateSound.ogg'])
-//     this.load.audio('mouseSound', ['./assets/mouseSound.ogg'])
-//     this.load.audio('bkMusic', ['./assets/bkMusic.ogg'])
+    //     this.load.audio('explosionAudio', ['./assets/explosionCrunch_000.ogg'])
+    //     this.load.audio('crateSound', ['./assets/crateSound.ogg'])
+    //     this.load.audio('mouseSound', ['./assets/mouseSound.ogg'])
+    //     this.load.audio('bkMusic', ['./assets/bkMusic.ogg'])
     this.load.atlas('smoke', './assets/smoke.png', './assets/smoke.json');
     this.load.atlas('fire', './assets/fire.png', './assets/fire.json');
     this.load.atlas('menuAssets', './assets/menuAssets.png', './assets/menuAssets.json')
@@ -40,9 +40,9 @@ const spiderTank = {
     const screenCenterY = rootObj.cameras.main.worldView.y + rootObj.cameras.main.height / 2;
     rootObj.playerContainer.x = screenCenterX
     rootObj.playerContainer.y = screenCenterY
-//     rootObj.explosionAudio = this.sound.add('explosionAudio');
-//     rootObj.crateSound = this.sound.add('crateSound');
-//     rootObj.mouseSound = this.sound.add('mouseSound');
+    //     rootObj.explosionAudio = this.sound.add('explosionAudio');
+    //     rootObj.crateSound = this.sound.add('crateSound');
+    //     rootObj.mouseSound = this.sound.add('mouseSound');
     gameState.robots = []
     rootObj.horizontalVelocity = 0
     rootObj.verticalVelocity = 0
@@ -53,8 +53,8 @@ const spiderTank = {
     rootObj.menuOpen = false
     rootObj.soundOn = 1
     rootObj.timer = 0
-//     rootObj.bkMusic = rootObj.sound.add('bkMusic', { volume: 0.25 });
-//     rootObj.bkMusic.play({loop: true})
+    //     rootObj.bkMusic = rootObj.sound.add('bkMusic', { volume: 0.25 });
+    //     rootObj.bkMusic.play({loop: true})
     rootObj.aGrid = new AlignGrid({ scene: rootObj, rows: 7, cols: 13 })
     rootObj.gameOver = false
     rootObj.crates = [
@@ -160,12 +160,12 @@ const spiderTank = {
     addScoreCounter()
     rootObj.aGrid.showNumbers()
 
-    const scale = Math.max(window.innerWidth /rootObj.cameras.main.worldView.width, window.innerHeight / rootObj.cameras.main.worldView.height);
+    const scale = Math.max(window.innerWidth / rootObj.cameras.main.worldView.width, window.innerHeight / rootObj.cameras.main.worldView.height);
     const w = rootObj.cameras.main.worldView.width * scale;
     const h = rootObj.cameras.main.worldView.height * scale;
 
-    if(t < 1){
-      document.dispatchEvent(new CustomEvent("scale", {detail: {w: w, h: h}}))
+    if (t < 1) {
+      document.dispatchEvent(new CustomEvent("scale", { detail: { w: w, h: h } }))
       t++
     }
 
@@ -403,7 +403,7 @@ const spiderTank = {
     }
 
     function explode(x, y, container) {
-//       rootObj.explosionAudio.play();
+      //       rootObj.explosionAudio.play();
       rootObj.anims.create({ key: 'fire', frames: rootObj.anims.generateFrameNames('fire'), frameRate: 5 });
       let atlasTexture = rootObj.textures.get('fire');
       let frames = atlasTexture.getFrameNames();
@@ -505,7 +505,7 @@ const spiderTank = {
       Align.scaleToGameW(rootObj.settingsBtn, 0.05)
       rootObj.settingsBtn.setInteractive({ useHandCursor: true })
       rootObj.settingsBtn.on('pointerdown', () => {
-//         rootObj.mouseSound.play()
+        //         rootObj.mouseSound.play()
         if (!rootObj.menuOpen) {
           openMenu()
           rootObj.menuOpen = true
@@ -521,7 +521,7 @@ const spiderTank = {
       Align.scaleToGameW(fullScreen, 0.05)
       fullScreen.setInteractive({ useHandCursor: true })
       fullScreen.on('pointerdown', () => {
-//         rootObj.mouseSound.play()
+        //         rootObj.mouseSound.play()
         if (!rootObj.menuOpen) {
           if (document.body.requestFullscreen) {
             document.body.requestFullscreen();
@@ -571,7 +571,7 @@ const spiderTank = {
       soundSwitchOn.setInteractive({ useHandCursor: true })
       soundSwitchOn.visible = rootObj.soundOn
       soundSwitchOn.on('pointerdown', () => {
-//         rootObj.mouseSound.play()
+        //         rootObj.mouseSound.play()
         soundSwitchOff.visible = true
         soundSwitchOn.visible = false
         stopSound()
@@ -588,7 +588,7 @@ const spiderTank = {
       soundSwitchOff.setInteractive({ useHandCursor: true })
       soundSwitchOff.visible = !rootObj.soundOn
       soundSwitchOff.on('pointerdown', () => {
-//         rootObj.mouseSound.play()
+        //         rootObj.mouseSound.play()
         soundSwitchOn.visible = true
         soundSwitchOff.visible = false
         playSound()
@@ -630,14 +630,14 @@ const spiderTank = {
 
     function stopSound() {
       rootObj.soundOn = 0
-//       rootObj.explosionAudio.setMute(true)
-//       rootObj.bkMusic.setMute(true)
+      //       rootObj.explosionAudio.setMute(true)
+      //       rootObj.bkMusic.setMute(true)
     }
 
     function playSound() {
       rootObj.soundOn = 1
-//       rootObj.explosionAudio.setMute(false)
-//       rootObj.bkMusic.setMute(false)
+      //       rootObj.explosionAudio.setMute(false)
+      //       rootObj.bkMusic.setMute(false)
     }
 
     function addEndGameMenu() {
@@ -673,7 +673,7 @@ const spiderTank = {
       Align.scaleToGameW(restartBtn, 0.075)
       restartBtn.setInteractive({ useHandCursor: true })
       restartBtn.on('pointerdown', () => {
-//         rootObj.mouseSound.play()
+        //         rootObj.mouseSound.play()
         resetGame()
       })
       rootObj.endGameMenu.add(restartBtn)
@@ -737,7 +737,7 @@ const spiderTank = {
       crate.body.setSize(crate.width, crate.height, true);
       rootObj.tweens.add({
         targets: crate,
-        alpha: { value: 0.85, duration: 1000, ease:"Power1" },
+        alpha: { value: 0.85, duration: 1000, ease: "Power1" },
         loop: -1
       })
       crate.index = index
@@ -746,8 +746,8 @@ const spiderTank = {
       }, null, this);
     }
 
-    function removeCrate(crate){
-//       rootObj.crateSound.play({volume: 0.25})
+    function removeCrate(crate) {
+      //       rootObj.crateSound.play({volume: 0.25})
       //increase score
       rootObj.scoreCounter.text = (parseInt(rootObj.scoreCounter.text) + 250).toString()
       rootObj.crates[crate.index].exists = false
@@ -785,10 +785,18 @@ function getRandomInt(min, max) {
 }
 
 
+let c = document.createElement('canvas')
+c.width = window.innerWidth * window.devicePixelRatio
+c.height = window.innerHeight * window.devicePixelRatio
+
+const scale = Math.max(window.innerWidth / c.width, window.innerHeight / c.height);
+const w = c.width * scale;
+const h = c.height * scale;
+
 const gameConf = {
   type: Phaser.AUTO,
-  width: window.innerWidth * window.devicePixelRatio,
-  height: window.innerHeight * window.devicePixelRatio,
+  width: w,
+  height: h,
   physics: {
     default: 'arcade',
     arcade: {
@@ -802,20 +810,20 @@ const gameConf = {
 let game = new Phaser.Game(gameConf);
 
 
-document.addEventListener("scale", (evt) => {
-  const gameConf2 = {
-    type: Phaser.AUTO,
-    width: evt.detail.w,
-    height: evt.detail.h,
-    physics: {
-      default: 'arcade',
-      arcade: {
-        debug: false,
-        gravity: { y: 0 }
-      }
-    },
-    scene: spiderTank,
-  };
-  game = new Phaser.Game(gameConf2);
-})
+// document.addEventListener("scale", (evt) => {
+//   const gameConf2 = {
+//     type: Phaser.AUTO,
+//     width: evt.detail.w,
+//     height: evt.detail.h,
+//     physics: {
+//       default: 'arcade',
+//       arcade: {
+//         debug: false,
+//         gravity: { y: 0 }
+//       }
+//     },
+//     scene: spiderTank,
+//   };
+//   game = new Phaser.Game(gameConf2);
+// })
 
