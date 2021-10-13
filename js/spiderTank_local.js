@@ -151,7 +151,7 @@ const spiderTank = {
       showEndGameMenu()
     })
 
-    addBackground()
+//     addBackground()
     addPlayer()
     spawnTurrets([0, 12, 78, 90])
     createMenu()
