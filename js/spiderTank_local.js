@@ -790,11 +790,11 @@ const gameConf = {
   },
   scene: spiderTank,
   scale: {
-    mode: Phaser.Scale.RESIZE,
+    mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
   }
 };
 console.error(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio)
 
 let game = new Phaser.Game(gameConf);
-console.error(game)
+console.error(game.canvas)
