@@ -804,6 +804,10 @@ const gameConf = {
       gravity: { y: 0 }
     }
   },
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH
+  },
   scene: spiderTank,
 };
 
