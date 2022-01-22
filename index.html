@@ -1,18 +1,74 @@
 <!DOCTYPE html>
-<html>
 
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no">
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-    </head>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
 
-    <body style="margin: 0; padding: 0; overflow: hidden; background-color: black;" id="gameContainer">
-        <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
-        <script src="https://yoannmoinet.github.io/nipplejs/javascripts/nipplejs.js"></script>
-        <script src="js/utilities/alignGrid.js"></script>
-        <script src="js/utilities/align.js"></script>
-        <script src="js/spiderTank_local.js"></script>
-    </body>
+        .button {
+            background-color: #e0e0e0;
+            color: black;
+            font-size: 16px;
+            margin: 10px 10px;
+            cursor: pointer;
+            width: 5vh;
+            height: 5vh;
+            border-radius: 50%;
+        }
 
-</html>
+        @font-face {
+            font-family: 'HelveticaNowText';
+            src: local('Helvetica Now Text  Bold'), local('Helvetica-Now-Text--Bold'),
+                url('HelveticaNowText-Bold.woff2') format('woff2'),
+                url('HelveticaNowText-Bold.woff') format('woff'),
+                url('HelveticaNowText-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.1/gsap.min.js"
+        integrity="sha512-cdV6j5t5o24hkSciVrb8Ki6FveC2SgwGfLE31+ZQRHAeSRxYhAQskLkq3dLm8ZcWe1N3vBOEYmmbhzf7NTtFFQ=="
+        crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+</head>
+
+<body>
+    <div>
+        <div style="margin: 0; padding: 0; position: absolute;" id="threeDiv">
+        </div>
+    </div>
+    <script src="ThreeScene.js" type="module">
+    </script>
+    <script type="module">
+        // import * as threeScene from 'https://cdn.jsdelivr.net/gh/HanSpringett/DearRider_Webflow_embedtest@release2.2/main.js'
+        // import { GLTFLoader } from 'https://cdn.jsdelivr.net/gh/mrdoob/three.js/examples/jsm/loaders/GLTFLoader.js'
+        // import Stats from 'https://cdn.jsdelivr.net/npm/three@0.134.0/examples/jsm/libs/stats.module.js'
+
+
+        // import { GLTFLoader } from 'https://cdn.jsdelivr.net/gh/mrdoob/three.js/examples/jsm/loaders/GLTFLoader.js'
+        // import { RGBELoader } from 'https://cdn.jsdelivr.net/npm/three@v0.108.0/examples/jsm/loaders/RGBELoader.js';
+
+
+        // let t = new threeScene()
+        // t.init(document.getElementById("threeDiv"), GLTFLoader, RGBELoader)
+        // t.loadModels()
+        // t.animate()
+
+        // gsap.delayedCall(1, () => {
+        //     t.startAnim()
+        // })
+        // gsap.delayedCall(1, () => {
+        //     t.startAnim()
+        // })
+        // document.addEventListener("click", () => {
+        //     window.dispatchEvent(new CustomEvent("moveCameraTimeline", { detail: 3 }))
+        // })
+        // threeScene.default.prototype.init(document.getElementById("threeDiv"), GLTFLoader)
+        // threeScene.default.prototype.loadModels()
+        // threeScene.default.prototype.animate()
+    </script>
+</body>
