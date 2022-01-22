@@ -50,21 +50,21 @@ export default class threeScene {
         this.spinAnim
         this.rotateCoords = { x: 0, y: 0, z: 0 }
         this.sceneAssets = [
-            'https://raw.githubusercontent.com/HanSpringett/DearRider_Webflow_embedtest/release5.0/assets/building_shadows_v11.gltf',
-            'https://raw.githubusercontent.com/HanSpringett/DearRider_Webflow_embedtest/release5.0/assets/Cubes_v2.gltf',
-            'https://raw.githubusercontent.com/HanSpringett/DearRider_Webflow_embedtest/main/assets/DearRider_1977.gltf',
-            'https://raw.githubusercontent.com/HanSpringett/DearRider_Webflow_embedtest/main/assets/1983.gltf',
-            'https://raw.githubusercontent.com/HanSpringett/DearRider_Webflow_embedtest/main/assets/1986.gltf',
-            'https://raw.githubusercontent.com/HanSpringett/DearRider_Webflow_embedtest/main/assets/1989.gltf',
-            'https://raw.githubusercontent.com/HanSpringett/DearRider/main/assets/1993.gltf',
-            'https://raw.githubusercontent.com/HanSpringett/DearRider/main/assets/1996.gltf',
-            'https://raw.githubusercontent.com/HanSpringett/DearRider_Webflow_embedtest/main/assets/1996_dolphin.gltf',
-            'https://raw.githubusercontent.com/HanSpringett/DearRider_Webflow_embedtest/main/assets/2002.gltf',
-            'https://raw.githubusercontent.com/HanSpringett/DearRider_Webflow_embedtest/main/assets/2013.gltf',
-            'https://raw.githubusercontent.com/HanSpringett/DearRider_Webflow_embedtest/main/assets/2020.gltf',
-            'https://raw.githubusercontent.com/HanSpringett/DearRider_Webflow_embedtest/main/assets/2021.gltf',
-            'https://raw.githubusercontent.com/HanSpringett/DearRider_Webflow_embedtest/main/assets/DearRiderOutro1.gltf',
-            'https://raw.githubusercontent.com/HanSpringett/DearRider_Webflow_embedtest/main/assets/DearRiderOutro2.gltf'
+            './assets/building_shadows_v11.gltf',
+            './assets/Cubes_v2.gltf',
+            './assets/DearRider_1977.gltf',
+            './assets/1983.gltf',
+            './assets/1986.gltf',
+            './assets/1989.gltf',
+            './assets/1993.gltf',
+            './assets/1996.gltf',
+            './assets/1996_dolphin.gltf',
+            './assets/2002.gltf',
+            './assets/2013.gltf',
+            './assets/2020.gltf',
+            './assets/2021.gltf',
+            './assets/DearRiderOutro1.gltf',
+            './assets/DearRiderOutro2.gltf'
         ];
 
         this.loadedItems = {};
@@ -259,52 +259,31 @@ export default class threeScene {
         //1986 board
         self.loadedItems[4].position.set(-345, 70, -135)
         self.loadedItems[4].rotateOnAxis(new THREE.Vector3(0, 1, 0), 3.14159)
-        self.loadedItems[4].children[0].children[0].material.side = THREE.FrontSide
-        self.loadedItems[4].children[0].children[1].material.side = THREE.FrontSide
-        self.loadedItems[4].children[0].children[2].material.side = THREE.FrontSide
-        self.loadedItems[4].children[0].children[3].material.side = THREE.FrontSide
         self.timelineObj[3].obj = self.loadedItems[4]
         //1989 board
         self.loadedItems[5].position.set(-1085, 70, -135)
         self.loadedItems[5].rotateOnAxis(new THREE.Vector3(0, 1, 0), 3.14159)
-        self.loadedItems[5].children[0].children[0].material.side = THREE.FrontSide
-        self.loadedItems[5].children[0].children[1].material.side = THREE.FrontSide
-        self.loadedItems[5].children[0].children[2].material.side = THREE.FrontSide
         self.timelineObj[4].obj = self.loadedItems[5]
         //1996_dolphin board
         self.loadedItems[6].position.set(-725, 70, 485)
         self.loadedItems[6].rotateOnAxis(new THREE.Vector3(0, 1, 0), 3.14159)
-        self.loadedItems[6].children[0].children[0].children[0].material.side = THREE.FrontSide
-        self.loadedItems[6].children[0].children[0].children[1].material.side = THREE.FrontSide
-        self.loadedItems[6].children[0].children[0].children[2].material.side = THREE.FrontSide
         self.timelineObj[5].obj = self.loadedItems[6]
         //1996 board
         self.loadedItems[7].position.set(45, 70, 485)
         self.loadedItems[7].rotateOnAxis(new THREE.Vector3(0, 1, 0), 3.14159)
-        self.loadedItems[7].children[0].children[0].material.side = THREE.FrontSide
-        self.loadedItems[7].children[0].children[1].material.side = THREE.FrontSide
-        self.loadedItems[7].children[0].children[2].material.side = THREE.FrontSide
         self.timelineObj[6].obj = self.loadedItems[7]
         //1993 board
         self.loadedItems[8].position.set(780, 70, 485)
         self.loadedItems[8].scale.set(1, 1, -1)
-        self.loadedItems[8].children[0].children[0].children[0].material.side = THREE.FrontSide
-        self.loadedItems[8].children[0].children[0].children[1].material.side = THREE.FrontSide
-        self.loadedItems[8].children[0].children[0].children[2].material.side = THREE.FrontSide
         self.timelineObj[7].obj = self.loadedItems[8]
         //2002 board
         self.loadedItems[9].position.set(1170, 70, 1000)
         self.loadedItems[9].rotateOnAxis(new THREE.Vector3(0, 1, 0), 3.14159)
-        self.loadedItems[9].children[0].children[0].material.side = THREE.FrontSide
-        self.loadedItems[9].children[0].children[1].material.side = THREE.FrontSide
-        self.loadedItems[9].children[0].children[2].material.side = THREE.FrontSide
         self.timelineObj[8].obj = self.loadedItems[9]
         //2013 board
         self.loadedItems[10].position.set(420, 70, 1000)
         self.loadedItems[10].rotateOnAxis(new THREE.Vector3(0, 1, 0), 3.14159)
-        self.loadedItems[10].children[0].children[0].material.side = THREE.FrontSide
-        self.loadedItems[10].children[0].children[1].material.side = THREE.FrontSide
-        self.loadedItems[10].children[0].children[2].material.side = THREE.FrontSide
+
         self.timelineObj[9].obj = self.loadedItems[10]
         //2020 board
         self.loadedItems[11].position.set(-330, 70, 1000)
@@ -453,6 +432,11 @@ export default class threeScene {
                 }
             }
         }, 100)
+
+        this.animate()
+        gsap.delayedCall(3, () => {
+            this.startAnim()
+        })
 
     }
     //move camera backwards on the timeline
@@ -946,3 +930,12 @@ export default class threeScene {
         this.exploreBtnOpen = visible
     }
 }
+
+
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/gh/mrdoob/three.js/examples/jsm/loaders/GLTFLoader.js'
+import { RGBELoader } from 'https://cdn.jsdelivr.net/npm/three@v0.108.0/examples/jsm/loaders/RGBELoader.js';
+
+
+let t = new threeScene()
+t.init(document.getElementById("threeDiv"), GLTFLoader, RGBELoader)
+t.loadModels()
